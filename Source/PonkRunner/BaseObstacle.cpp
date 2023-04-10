@@ -7,7 +7,7 @@
 ABaseObstacle::ABaseObstacle()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 // Called when the game starts or when spawned
@@ -16,13 +16,14 @@ void ABaseObstacle::BeginPlay()
 	Super::BeginPlay();
 }
 
-// Called every frame
-void ABaseObstacle::Tick(float DeltaTime)
+void ABaseObstacle::UpdateObstacle(float dt)
 {
-	Super::Tick(DeltaTime);
-
-	auto pos = GetActorLocation();
-	pos.X -= Speed * DeltaTime;
+	FVector pos = GetActorLocation();
+	pos.X -= Speed * dt;
 	SetActorLocation(pos);
 }
 
+bool ABaseObstacle::IsOutOfBounds(FVector const* runnerPosition)
+{
+	return GetActorLocation().X < runnerPosition->X;
+}

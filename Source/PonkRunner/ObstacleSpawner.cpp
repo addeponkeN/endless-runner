@@ -17,9 +17,9 @@ AObstacleSpawner::AObstacleSpawner()
 
 void AObstacleSpawner::BeginPlay()
 {
+	Super::BeginPlay();
 	_timerManager = &GetWorld()->GetTimerManager();
 	_obManager = Cast<AObstacleManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AObstacleManager::StaticClass()));
-	Super::BeginPlay();
 	if (SpawningEnabled)
 		ScheduleSpawn();
 }
@@ -45,9 +45,7 @@ void AObstacleSpawner::SetSpawningEnabled(const bool enabled)
 void AObstacleSpawner::SpawnActor()
 {
 	const FVector SpawnPosition = GetRandomAreaPosition();
-	ABaseObstacle* obstacle = _obManager->SpawnObstacle();
-	obstacle->SetActorLocation(SpawnPosition);
-	// GetWorld()->SpawnActor(ActorToSpawn, &SpawnPosition);
+	_obManager->SpawnObstacle(&SpawnPosition);
 }
 
 void AObstacleSpawner::ScheduleSpawn()

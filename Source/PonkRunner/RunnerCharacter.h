@@ -3,6 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "HealthComponent.h"
+#include "ObstacleReceiver.h"
+#include "RunnerHUD.h"
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
 #include "RunnerCharacter.generated.h"
@@ -17,8 +20,11 @@ public:
 	ARunnerCharacter();
 
 protected:
+	virtual void PostInitializeComponents() override;
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:	
 	// Called every frame
@@ -29,6 +35,18 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float MoveSpeed = 50.f;
+
+	UFUNCTION()
+	void OnHitByObstacle();
+
+	UFUNCTION()
+	void OnHealthChanged();
+
+	UPROPERTY()
+	URunnerHUD* HUD;
+	
+	UObstacleReceiver* ObstacleReceiver;
+	UHealthComponent* Health;
 	
 private:
 
@@ -40,6 +58,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	UCameraComponent* RunnerCamera;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<URunnerHUD> HUDClass;
 	
 	void MoveHorizontal(float direction);
 	void MoveHorizontalRelativeToActor(float direction);

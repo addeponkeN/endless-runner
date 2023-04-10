@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Poolable.h"
-#include "PonkRunner.h"
 
 //////////////////////////////////////////////////
 ////////////////////HEADER////////////////////////
@@ -14,9 +13,12 @@ class ActorPool
 {
 public:
 	static void Init(UWorld* world, TSubclassOf<AActor> obj);
+	static void Clear();
 	static void SetTemplate(TSubclassOf<AActor> obj);
-	static T* Create();
-	static T* Get();
+	static T* Create(FVector const* position, FRotator const* rotation);
+	static T* Spawn();
+	static T* Spawn(FVector const* position);
+	static T* Spawn(FVector const* position, FRotator const* rotation);
 	static void Return(T* obj);
 
 	static TSubclassOf<AActor> ObjectTemplate;
@@ -49,9 +51,16 @@ TSubclassOf<AActor> ActorPool<T, Ty>::ObjectTemplate;
 template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
 void ActorPool<T, Ty>::Init(UWorld* world, TSubclassOf<AActor> obj)
 {
-	_pool.Reset();
+	// _pool.Reset();
+	Clear();
 	_world = world;
 	SetTemplate(obj);
+}
+
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> E0>
+void ActorPool<T, E0>::Clear()
+{
+	_pool.Reset();
 }
 
 template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
@@ -62,15 +71,27 @@ void ActorPool<T, Ty>::SetTemplate(TSubclassOf<AActor> obj)
 }
 
 template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
-T* ActorPool<T, Ty>::Create()
+T* ActorPool<T, Ty>::Create(FVector const* position, FRotator const* rotation)
 {
-	AActor* spawned = _world->SpawnActor(ObjectTemplate);
+	AActor* spawned = _world->SpawnActor(ObjectTemplate, position, rotation);
 	T* ret = Cast<T>(spawned);
 	return ret;
 }
 
 template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
-T* ActorPool<T, Ty>::Get()
+T* ActorPool<T, Ty>::Spawn()
+{
+	return Spawn(&FVector::ZeroVector, &FRotator::ZeroRotator);
+}
+
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> E0>
+T* ActorPool<T, E0>::Spawn(FVector const* position)
+{
+	return Spawn(position, &FRotator::ZeroRotator);
+}
+
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> E0>
+T* ActorPool<T, E0>::Spawn(FVector const* position, FRotator const* rotation)
 {
 	const int size = _pool.Num();
 
@@ -78,17 +99,19 @@ T* ActorPool<T, Ty>::Get()
 
 	if (size <= 0)
 	{
-		ret = Create();
+		ret = Create(position, rotation);
 		ret->SetFolderPath(_name);
-		LOG("Created");
+		// LOG("Created");
 	}
 	else
 	{
 		ret = _pool.Pop();
-		LOG("Popped");
+		// LOG("Popped");
 	}
 
 	APoolable* poolable = ret;
+	poolable->SetActorLocation(*position);
+	poolable->SetActorRotation(*rotation);
 	poolable->SetActive(true);
 
 	return ret;
@@ -101,5 +124,5 @@ void ActorPool<T, Ty>::Return(T* obj)
 	poolable->Reset();
 	poolable->SetActive(false);
 	_pool.Add(obj);
-	LOG("Returned");
+	// LOG("Returned");
 }

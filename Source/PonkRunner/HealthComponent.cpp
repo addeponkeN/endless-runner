@@ -9,21 +9,29 @@ UHealthComponent::UHealthComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-
 // Called when the game starts
 void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	MaxValue = Value;
-	// ...
 }
 
-void UHealthComponent::Damage(float amount)
+void UHealthComponent::SetValue(const float& newValue)
+{
+	//	add this check to avoid unnecessary broadcasting if the value is the same
+	if (Value != newValue)
+	{
+		Value = FMath::Clamp(newValue, 0.f, MaxValue);
+		OnValueChangedEvent.Broadcast();
+	}
+}
+
+void UHealthComponent::Damage(const float& amount)
 {
 	SetValue(Value - amount);
 }
 
-void UHealthComponent::Heal(float amount)
+void UHealthComponent::Heal(const float& amount)
 {
 	SetValue(Value + amount);
 }
@@ -31,10 +39,4 @@ void UHealthComponent::Heal(float amount)
 void UHealthComponent::Kill()
 {
 	Value = 0;
-}
-
-void UHealthComponent::SetValue(float newValue)
-{
-	Value = newValue;
-	OnValueChangedEvent.Broadcast();
 }

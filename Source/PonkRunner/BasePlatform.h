@@ -3,30 +3,27 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Poolable.h"
 #include "GameFramework/Actor.h"
-#include "BaseObstacle.generated.h"
+#include "BasePlatform.generated.h"
 
 UCLASS()
-class PONKRUNNER_API ABaseObstacle : public APoolable
+class PONKRUNNER_API ABasePlatform : public AActor
 {
 	GENERATED_BODY()
-
-public:
+	
+public:	
 	// Sets default values for this actor's properties
-	ABaseObstacle();
+	ABasePlatform();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
-	void UpdateObstacle(float dt);
-	bool IsOutOfBounds(FVector const* runnerPosition);
 
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Speed = 250.f;
-
+	AActor* Runner;
+	
 };

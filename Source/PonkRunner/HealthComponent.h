@@ -6,7 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHealthValueChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHealthValueChangedEvent);
+
+// could add an OnDeathEvent, but might become too bloated
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PONKRUNNER_API UHealthComponent : public UActorComponent
@@ -22,20 +24,24 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-
 	UPROPERTY(BlueprintAssignable)
-	FHealthValueChanged OnValueChangedEvent;
+	FHealthValueChangedEvent OnValueChangedEvent;
 
 	UPROPERTY(EditAnywhere)
 	float Value;
 
 	UPROPERTY(EditInstanceOnly)
-	float MaxValue;
+	float MaxValue = 1.f;
 
-	void Damage(float amount);
-	void Heal(float amount);
+	UFUNCTION(BlueprintCallable)
+	void SetValue(const float& newValue);
 
+	UFUNCTION(BlueprintCallable)
+	void Damage(const float& amount);
+
+	UFUNCTION(BlueprintCallable)
+	void Heal(const float& amount);
+
+	UFUNCTION(BlueprintCallable)
 	void Kill();
-
-	void SetValue(float newValue);
 };

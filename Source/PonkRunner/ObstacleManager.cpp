@@ -4,35 +4,32 @@
 #include "ObstacleManager.h"
 
 #include "ActorPool.h"
+#include "PonkRunnerGameModeBase.h"
 
 // Sets default values
 AObstacleManager::AObstacleManager()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	_obstacles = TArray<ABaseObstacle*>();
-	_index = 0;
 }
 
 // Called when the game starts or when spawned
 void AObstacleManager::BeginPlay()
 {
 	Super::BeginPlay();
-
 	ActorPool<ABaseObstacle>::Init(GetWorld(), ObstacleTemplate);
-	
-	// if (!Pool)
-	// {
-	// LOG("Pool null #1");
-	// auto world = GetWorld();
-	// Pool = Cast<Pool<ABaseObstacle>>(UGameplayStatics::GetActorOfClass(world, Pool<ABaseObstacle>::StaticClass()));
-	// if (!Pool)
-	// {
-	// LOG("Pool null #2");
-	// Pool = Cast<Pool<ABaseObstacle>>(world->SpawnActor(Pool<ABaseObstacle>::StaticClass()));
-	// Pool->ObjectTemplate = ObstacleTemplate;
-	// }
-	// }
+
+	auto baseGameMode = GetWorld()->GetAuthGameMode();
+	auto gameMode = Cast<APonkRunnerGameModeBase>(baseGameMode);
+	auto gameMode2 = dynamic_cast<APonkRunnerGameModeBase*>(baseGameMode);
+	WorldAnchor = gameMode->WorldAnchor;
+	WorldAnchor = gameMode2->WorldAnchor;
+}
+
+void AObstacleManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	ActorPool<ABaseObstacle>::Clear();
 }
 
 // Called every frame
@@ -40,22 +37,23 @@ void AObstacleManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	int32 size = _obstacles.Num();
-	for (int i = 0; i < size; ++i)
+	FVector endOfLine = WorldAnchor->GetActorLocation();
+	
+	for (int i = 0; i < _obstacles.Num(); ++i)
 	{
-		FVector location = _obstacles[i]->GetActorLocation();
-		if (location.X < -30)
+		ABaseObstacle* obstacle = _obstacles[i];
+
+		if (obstacle->IsOutOfBounds(&endOfLine))
 		{
-			DespawnObstacle(_obstacles[i]);
+			DespawnObstacle(obstacle);
 			i--;
-			size--;
 		}
 	}
 }
 
-ABaseObstacle* AObstacleManager::SpawnObstacle()
+ABaseObstacle* AObstacleManager::SpawnObstacle(FVector const* position)
 {
-	ABaseObstacle* obstacle = ActorPool<ABaseObstacle>::Get();
+	ABaseObstacle* obstacle = ActorPool<ABaseObstacle>::Spawn(position);
 	_obstacles.Add(obstacle);
 	return obstacle;
 }
