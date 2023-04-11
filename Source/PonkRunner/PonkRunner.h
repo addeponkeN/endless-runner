@@ -9,6 +9,7 @@
 //	## ####### ##
 
 #define LOG(x) PonkLog(FColor::White, x)
+#define LOGI(x) PonkLog(FColor::Cyan, x);
 #define LOGE(x) PonkLog(FColor::Red, x);
 #define LOGW(x) PonkLog(FColor::Yellow, x);
 

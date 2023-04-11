@@ -44,8 +44,17 @@ void AObstacleSpawner::SetSpawningEnabled(const bool enabled)
 
 void AObstacleSpawner::SpawnActor()
 {
+	UpdateSpawnPositionOrigin();
 	const FVector SpawnPosition = GetRandomAreaPosition();
 	_obManager->SpawnObstacle(&SpawnPosition);
+}
+
+void AObstacleSpawner::UpdateSpawnPositionOrigin()
+{
+	const float offsetFromAnchor = 1200.f;
+	FVector anchor = _obManager->WorldAnchor->GetActorLocation();
+	FVector position = FVector(anchor.X + offsetFromAnchor, 0.f, 0.f);
+	SetActorLocation(position);
 }
 
 void AObstacleSpawner::ScheduleSpawn()

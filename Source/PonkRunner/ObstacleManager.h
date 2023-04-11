@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseObstacle.h"
+#include "ObstacleBase.h"
 #include "ActorPool.h"
 #include "GameFramework/Actor.h"
 #include "ObstacleManager.generated.h"
@@ -26,9 +26,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	ABaseObstacle* SpawnObstacle(FVector const* position);
+	AObstacleBase* SpawnObstacle(FVector const* position);
 
-	void DespawnObstacle(ABaseObstacle* obstacle);
+	void DespawnObstacle(AObstacleBase* obstacle);
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> ObstacleTemplate;
@@ -40,5 +40,5 @@ public:
 	AActor* WorldAnchor;
 
 private:
-	TArray<ABaseObstacle*> _obstacles;
+	TArray<AObstacleBase*> _obstacles;
 };

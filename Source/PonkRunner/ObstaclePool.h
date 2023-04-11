@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseObstacle.h"
+#include "ObstacleBase.h"
 #include "GameFramework/Actor.h"
 #include "ObstaclePool.generated.h"
 
@@ -23,13 +23,13 @@ protected:
 public:
 	// Called every frame
 
-	ABaseObstacle* Create() const;
-	ABaseObstacle* Get();
-	void Return(ABaseObstacle* obstacle);
+	AObstacleBase* Create() const;
+	AObstacleBase* Get();
+	void Return(AObstacleBase* obstacle);
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> ObstacleTemplate;
 
 private:
-	TArray<ABaseObstacle*> _pool;
+	TArray<AObstacleBase*> _pool;
 };

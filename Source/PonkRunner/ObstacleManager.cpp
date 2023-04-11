@@ -17,7 +17,7 @@ AObstacleManager::AObstacleManager()
 void AObstacleManager::BeginPlay()
 {
 	Super::BeginPlay();
-	ActorPool<ABaseObstacle>::Init(GetWorld(), ObstacleTemplate);
+	ActorPool<AObstacleBase>::Init(GetWorld(), ObstacleTemplate);
 
 	auto baseGameMode = GetWorld()->GetAuthGameMode();
 	auto gameMode = Cast<APonkRunnerGameModeBase>(baseGameMode);
@@ -29,7 +29,7 @@ void AObstacleManager::BeginPlay()
 void AObstacleManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-	ActorPool<ABaseObstacle>::Clear();
+	ActorPool<AObstacleBase>::Clear();
 }
 
 // Called every frame
@@ -41,9 +41,11 @@ void AObstacleManager::Tick(float DeltaTime)
 	
 	for (int i = 0; i < _obstacles.Num(); ++i)
 	{
-		ABaseObstacle* obstacle = _obstacles[i];
+		AObstacleBase* obstacle = _obstacles[i];
 
-		if (obstacle->IsOutOfBounds(&endOfLine))
+		obstacle->UpdateObstacle(DeltaTime);
+
+		if (!obstacle->IsAlive || obstacle->IsOutOfBounds(&endOfLine))
 		{
 			DespawnObstacle(obstacle);
 			i--;
@@ -51,15 +53,15 @@ void AObstacleManager::Tick(float DeltaTime)
 	}
 }
 
-ABaseObstacle* AObstacleManager::SpawnObstacle(FVector const* position)
+AObstacleBase* AObstacleManager::SpawnObstacle(FVector const* position)
 {
-	ABaseObstacle* obstacle = ActorPool<ABaseObstacle>::Spawn(position);
+	AObstacleBase* obstacle = ActorPool<AObstacleBase>::Spawn(position);
 	_obstacles.Add(obstacle);
 	return obstacle;
 }
 
-void AObstacleManager::DespawnObstacle(ABaseObstacle* obstacle)
+void AObstacleManager::DespawnObstacle(AObstacleBase* obstacle)
 {
 	_obstacles.Remove(obstacle);
-	ActorPool<ABaseObstacle>::Return(obstacle);
+	ActorPool<AObstacleBase>::Return(obstacle);
 }

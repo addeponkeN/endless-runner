@@ -60,7 +60,7 @@ void ARunnerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	//	not sure if this is even needed...
+	//	not sure if this is needed...
 	if (HUD)
 	{
 		HUD->RemoveFromParent();
@@ -83,7 +83,8 @@ void ARunnerCharacter::Tick(float DeltaTime)
 		MoveHorizontalRelativeToActor(DeltaTime);
 	}
 
-	AddMovementInput(GetActorForwardVector(), MoveSpeed * DeltaTime);
+	// move forward
+	// AddMovementInput(GetActorForwardVector(), MoveSpeed * DeltaTime);
 }
 
 // Called to bind functionality to input

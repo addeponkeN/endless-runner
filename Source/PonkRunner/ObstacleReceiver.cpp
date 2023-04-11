@@ -3,7 +3,7 @@
 
 #include "ObstacleReceiver.h"
 
-#include "BaseObstacle.h"
+#include "ObstacleBase.h"
 #include "PonkRunner.h"
 
 // Sets default values for this component's properties
@@ -32,15 +32,16 @@ void UObstacleReceiver::OnObstacleOverlapBegin(UPrimitiveComponent* overlappedCo
                                                UPrimitiveComponent* otherComp,
                                                int32 otherBodyIndex, bool fromSweep, const FHitResult& result)
 {
-	if (ABaseObstacle* obs = dynamic_cast<ABaseObstacle*>(otherActor))
+	if (AObstacleBase* obs = Cast<AObstacleBase>(otherActor))
 	{
 		OnTriggerEvent.Broadcast();
-		LOG("Overlapped Obstacle!");
+		obs->OnHitReceiver(this);
+		// LOG("Overlapped Obstacle!");
 	}
 }
 
 void UObstacleReceiver::OnObstacleOverlapEnd(UPrimitiveComponent* overlappedComp, AActor* otherActor,
                                              UPrimitiveComponent* otherComp, int32 otherBodyIndex)
 {
-	LOG("OVERLAP END");
+	// LOG("OVERLAP END");
 }

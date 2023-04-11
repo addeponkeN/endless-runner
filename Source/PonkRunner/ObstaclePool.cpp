@@ -17,18 +17,18 @@ void AObstaclePool::BeginPlay()
 	SetFolderPath(FName(GetName()));
 }
 
-ABaseObstacle* AObstaclePool::Create() const
+AObstacleBase* AObstaclePool::Create() const
 {
 	AActor* spawned = GetWorld()->SpawnActor(ObstacleTemplate);
-	ABaseObstacle* ret = Cast<ABaseObstacle>(spawned);
+	AObstacleBase* ret = Cast<AObstacleBase>(spawned);
 	return ret;
 }
 
-ABaseObstacle* AObstaclePool::Get()
+AObstacleBase* AObstaclePool::Get()
 {
 	const int num = _pool.Num();
 
-	ABaseObstacle* ret;
+	AObstacleBase* ret;
 
 	if (num <= 0)
 	{
@@ -47,7 +47,7 @@ ABaseObstacle* AObstaclePool::Get()
 	return ret;
 }
 
-void AObstaclePool::Return(ABaseObstacle* obstacle)
+void AObstaclePool::Return(AObstacleBase* obstacle)
 {
 	obstacle->Reset();
 	obstacle->SetActive(false);

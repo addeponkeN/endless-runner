@@ -31,6 +31,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnActor();
 
+	void UpdateSpawnPositionOrigin();
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool SpawningEnabled;
 

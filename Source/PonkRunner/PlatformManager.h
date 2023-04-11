@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BasePlatform.h"
+#include "PlatformBase.h"
 #include "GameFramework/Actor.h"
 #include "PlatformManager.generated.h"
 
@@ -26,12 +26,24 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> PlatformTemplate;
-	
-	TArray<ABasePlatform*> Platforms;
 
 	UPROPERTY(EditAnywhere)
-	int PlatformsToSpawnAhead = 10;
+	APlatformBase* Template;
+
+	TArray<APlatformBase*> Platforms;
+
+	UPROPERTY(EditAnywhere)
+	int PlatformCount = 12;
 
 	UPROPERTY(EditAnywhere)
 	AActor* WorldAnchor;
+
+private:
+
+	void PlacePlatform(APlatformBase* platform);
+	
+	APlatformBase* _lastPlatform;
+
+	int32 _lastPlatformIndex;
+	float _platformFrontPosition;
 };
