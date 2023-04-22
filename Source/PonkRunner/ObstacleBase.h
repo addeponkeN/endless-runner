@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ObstacleReceiver.h"
+#include "ObstacleCollider.h"
 #include "Poolable.h"
 #include "GameFramework/Actor.h"
 #include "ObstacleBase.generated.h"
@@ -24,16 +24,37 @@ protected:
 public:
 	virtual void Reset() override;
 	void UpdateObstacle(float dt);
-	bool IsOutOfBounds(FVector const* runnerPosition);
+	bool IsOutOfBounds(FVector const* runnerPosition) const;
 
-	void OnHitReceiver(UObstacleReceiver* receiver);
+	UFUNCTION()
+	void OnColliderOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+									UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+									const FHitResult& SweepResult);
 
 	UFUNCTION(BlueprintCallable)
 	void Kill();
+	
+	UFUNCTION(BlueprintCallable)
+	virtual void OnHitByBullet();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Speed = 250.f;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool IsAlive = true;
+
+	UPROPERTY(EditAnywhere)
+	bool KillWhenHit = true;
+
+	UPROPERTY(VisibleAnywhere)
+	bool KilledByPlayer;
+
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* Mesh;
+
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* Collider;
+	
+	// UPROPERTY(EditAnywhere)
+	// UBulletCollider* BulletCollider;
 };

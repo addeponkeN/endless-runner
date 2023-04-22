@@ -44,4 +44,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Kill();
+	
+	UFUNCTION(BlueprintCallable)
+	void ResetHealth();
 };

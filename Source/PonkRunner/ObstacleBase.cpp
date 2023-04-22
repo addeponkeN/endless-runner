@@ -3,23 +3,28 @@
 
 #include "ObstacleBase.h"
 
-// Sets default values
 AObstacleBase::AObstacleBase()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	RootComponent = Mesh;
+
+	Collider = CreateDefaultSubobject<UBoxComponent>(TEXT("Collider"));
+	Collider->SetBoxExtent(FVector(10.f, 350.f, 1.f));
+	Collider->SetupAttachment(RootComponent);
 }
 
-// Called when the game starts or when spawned
 void AObstacleBase::BeginPlay()
 {
 	Super::BeginPlay();
+	Collider->OnComponentBeginOverlap.AddDynamic(this, &AObstacleBase::OnColliderOverlapBegin);
 }
 
 void AObstacleBase::Reset()
 {
 	Super::Reset();
 	IsAlive = true;
+	KilledByPlayer = false;
 }
 
 void AObstacleBase::UpdateObstacle(float dt)
@@ -29,17 +34,29 @@ void AObstacleBase::UpdateObstacle(float dt)
 	SetActorLocation(pos);
 }
 
-bool AObstacleBase::IsOutOfBounds(FVector const* runnerPosition)
+bool AObstacleBase::IsOutOfBounds(FVector const* runnerPosition) const
 {
-	return GetActorLocation().X < runnerPosition->X - 100.f;
+	constexpr float unitsBehindRunner = 300.f;
+	return GetActorLocation().X < runnerPosition->X - unitsBehindRunner;
 }
 
-void AObstacleBase::OnHitReceiver(UObstacleReceiver* receiver)
+void AObstacleBase::OnColliderOverlapBegin(
+	UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+	bool bFromSweep, const FHitResult& SweepResult)
 {
-	Kill();
 }
 
 void AObstacleBase::Kill()
 {
 	IsAlive = false;
+}
+
+void AObstacleBase::OnHitByBullet()
+{
+	if (KillWhenHit)
+	{
+		KilledByPlayer = true;
+		Kill();
+	}
 }

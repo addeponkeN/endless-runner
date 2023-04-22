@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BulletBase.h"
+#include "Components/ArrowComponent.h"
 #include "GameFramework/Actor.h"
 #include "WeaponBase.generated.h"
 
@@ -23,13 +25,16 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// UFUNCTION(BlueprintCallable)
+	//	start firing (fire button is pressed)
 	virtual void FireStart();
 
-	// UFUNCTION(BlueprintCallable)
+	//	stop firing (fire button is released)
 	virtual void FireEnd();
 
+	//	fire.
 	virtual void FireTick();
+
+	virtual void SpawnBullet();
 
 	UFUNCTION(BlueprintCallable)
 	bool CanFire();
@@ -37,10 +42,15 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool IsFireDown;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float FireRate = 0.5f;
 
+	UPROPERTY(EditAnywhere)
+	UArrowComponent* BulletSpawnLocation;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ABulletBase> BulletTemplate;
+
 private:
-	FTimerHandle _timerHandle;
-	float _timer;
+	float _fireRateTimer;
 };

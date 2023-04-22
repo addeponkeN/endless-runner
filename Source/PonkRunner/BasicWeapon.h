@@ -14,6 +14,10 @@ class PONKRUNNER_API ABasicWeapon : public AWeaponBase
 {
 	GENERATED_BODY()
 
-	virtual void FireStart() override;
+protected:
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+public:
+	virtual void FireStart() override;
+	virtual void SpawnBullet() override;
 };

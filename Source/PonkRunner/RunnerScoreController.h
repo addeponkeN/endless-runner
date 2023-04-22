@@ -3,18 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RunnerCharacter.h"
+
+#include "RunManCharacter.h"
 #include "ScoreManager.h"
 #include "Components/ActorComponent.h"
+
 #include "RunnerScoreController.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PONKRUNNER_API URunnerScoreController : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	URunnerScoreController();
 
@@ -23,11 +25,28 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	void StartTickScore();
+	void StopTickScore();
+	void AddTickScore();
 
 	UFUNCTION()
 	void OnScoreChanged();
 
-	ARunnerCharacter* Runner;
+	UFUNCTION()
+	void SetEnabled(bool isEnabled);
+
+	UPROPERTY()
+	bool IsEnabled;
+
+	UPROPERTY(BlueprintReadWrite)
+	float ScoreGainInterval;
+
+	UPROPERTY(BlueprintReadWrite)
+	float ScoreGainedPerTick;
+
+	ARunManCharacter* Runner;
 	UScoreManager* ScoreManager;
 
+private:
+	FTimerHandle _timerHandle;
 };

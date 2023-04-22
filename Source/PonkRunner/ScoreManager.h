@@ -14,28 +14,16 @@ class PONKRUNNER_API UScoreManager : public UObject
 	
 public:
 	UScoreManager();
-
-	void StartTickScore();
-	void StopTickScore();
-
+	
 	UFUNCTION(BlueprintCallable)
 	void AddScore(float score);
-	
+
+	UFUNCTION(BlueprintCallable)
+	void ResetScore();
+
 	UPROPERTY(BlueprintReadOnly)
 	float CurrentScore;
 
-	UPROPERTY(BlueprintReadWrite)
-	float ScoreGainInterval;
-	
-	UPROPERTY(BlueprintReadWrite)
-	float ScoreGainedPerTick;
-
 	UPROPERTY(BlueprintCallable)
 	FOnScoreChangedEvent OnScoreChangedEvent;
-
-
-private:
-	void AddTickScore();
-	
-	FTimerHandle _timerHandle;
 };

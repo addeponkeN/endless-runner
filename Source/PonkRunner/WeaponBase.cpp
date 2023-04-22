@@ -13,20 +13,21 @@ AWeaponBase::AWeaponBase()
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
+	BulletSpawnLocation = Cast<UArrowComponent>(GetComponentByClass(UArrowComponent::StaticClass()));
 }
 
 void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (_timer > 0.f)
+	if (_fireRateTimer > 0.f)
 	{
-		_timer -= DeltaTime;
+		_fireRateTimer -= DeltaTime;
 	}
 
 	if (IsFireDown)
 	{
-		if (_timer <= 0.f)
+		if (_fireRateTimer <= 0.f)
 		{
 			FireTick();
 		}
@@ -49,11 +50,16 @@ void AWeaponBase::FireEnd()
 
 void AWeaponBase::FireTick()
 {
-	LOG("Weapon Fire Tick");
-	_timer = FireRate;
+	// LOG("Weapon Fired");
+	_fireRateTimer = FireRate;
+	SpawnBullet();
+}
+
+void AWeaponBase::SpawnBullet()
+{
 }
 
 bool AWeaponBase::CanFire()
 {
-	return _timer <= 0.f;
+	return _fireRateTimer <= 0.f;
 }

@@ -40,3 +40,8 @@ void UHealthComponent::Kill()
 {
 	Value = 0;
 }
+
+void UHealthComponent::ResetHealth()
+{
+	Value = MaxValue;
+}

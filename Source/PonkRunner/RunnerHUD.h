@@ -17,9 +17,9 @@ class PONKRUNNER_API URunnerHUD : public UUserWidget
 
 public:
 
-	void SetHealth(const int32 health);
+	void SetHealth(const int32& health);
 
-	void SetScore(const int32 score);
+	void SetScore(const int32& score);
 
 	UPROPERTY(EditAnywhere, meta=(BindWidget))
 	UTextBlock* LbHealth;

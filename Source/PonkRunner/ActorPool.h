@@ -8,7 +8,7 @@
 ////////////////////HEADER////////////////////////
 //////////////////////////////////////////////////
 
-template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int>  = 0>
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int>  = 1>
 class ActorPool
 {
 public:
@@ -22,6 +22,7 @@ public:
 	static void Return(T* obj);
 
 	static TSubclassOf<AActor> ObjectTemplate;
+	static bool IsInitialized;
 
 private:
 	static FName _name;
@@ -30,11 +31,12 @@ private:
 };
 
 
-//	linker will not work when put in another .cpp file, but this works
-
 //////////////////////////////////////////////////
 //////////////////////CPP/////////////////////////
 //////////////////////////////////////////////////
+
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
+bool ActorPool<T, Ty>::IsInitialized;
 
 template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
 FName ActorPool<T, Ty>::_name;
@@ -51,31 +53,31 @@ TSubclassOf<AActor> ActorPool<T, Ty>::ObjectTemplate;
 template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
 void ActorPool<T, Ty>::Init(UWorld* world, TSubclassOf<AActor> obj)
 {
-	// _pool.Reset();
 	Clear();
 	_world = world;
 	SetTemplate(obj);
+	IsInitialized = true;
 }
 
-template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> E0>
-void ActorPool<T, E0>::Clear()
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
+void ActorPool<T, Ty>::Clear()
 {
-	_pool.Reset();
+	IsInitialized = false;
+	_pool.Empty();
 }
 
 template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
 void ActorPool<T, Ty>::SetTemplate(TSubclassOf<AActor> obj)
 {
 	ObjectTemplate = obj;
-	_name = FName(ObjectTemplate->GetName());
+	_name = FName(FString::Format(TEXT("Pool/{0}"), {ObjectTemplate->GetName()}));
 }
 
 template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
 T* ActorPool<T, Ty>::Create(FVector const* position, FRotator const* rotation)
 {
-	AActor* spawned = _world->SpawnActor(ObjectTemplate, position, rotation);
-	T* ret = Cast<T>(spawned);
-	return ret;
+	T* spawned = _world->SpawnActor<T>(ObjectTemplate, *position, *rotation);
+	return spawned;
 }
 
 template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
@@ -84,35 +86,33 @@ T* ActorPool<T, Ty>::Spawn()
 	return Spawn(&FVector::ZeroVector, &FRotator::ZeroRotator);
 }
 
-template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> E0>
-T* ActorPool<T, E0>::Spawn(FVector const* position)
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
+T* ActorPool<T, Ty>::Spawn(FVector const* position)
 {
 	return Spawn(position, &FRotator::ZeroRotator);
 }
 
-template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> E0>
-T* ActorPool<T, E0>::Spawn(FVector const* position, FRotator const* rotation)
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
+T* ActorPool<T, Ty>::Spawn(FVector const* position, FRotator const* rotation)
 {
-	const int size = _pool.Num();
-
 	T* ret;
 
-	if (size <= 0)
+	APoolable* poolable;
+	if (_pool.IsEmpty())
 	{
 		ret = Create(position, rotation);
-		ret->SetFolderPath(_name);
-		// LOG("Created");
+		poolable = ret;
+		poolable->OnCreated(_name);
 	}
 	else
 	{
-		ret = _pool.Pop();
-		// LOG("Popped");
+		ret = _pool.Pop(false);
+		poolable = ret;
 	}
 
-	APoolable* poolable = ret;
 	poolable->SetActorLocation(*position);
 	poolable->SetActorRotation(*rotation);
-	poolable->SetActive(true);
+	poolable->Spawned();
 
 	return ret;
 }
@@ -122,7 +122,6 @@ void ActorPool<T, Ty>::Return(T* obj)
 {
 	APoolable* poolable = obj;
 	poolable->Reset();
-	poolable->SetActive(false);
+	poolable->Returned();
 	_pool.Add(obj);
-	// LOG("Returned");
 }

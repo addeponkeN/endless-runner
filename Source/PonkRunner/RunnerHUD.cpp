@@ -4,16 +4,14 @@
 #include "RunnerHUD.h"
 
 
-void URunnerHUD::SetHealth(const int32 health)
+void URunnerHUD::SetHealth(const int32& health)
 {
-	FString healthText = FString::FromInt(health);
-	FText healthDisplayText = FText::FromString(healthText);
+	FText healthDisplayText = FText::AsNumber(health);
 	LbHealth->SetText(healthDisplayText);
 }
 
-void URunnerHUD::SetScore(const int32 score)
+void URunnerHUD::SetScore(const int32& score)
 {
-	FString scoreText = FString::FromInt(score);
-	FText scoreDisplayText = FText::FromString(scoreText);
+	FText scoreDisplayText = FText::AsNumber(score);
 	LbScore->SetText(scoreDisplayText);
 }

@@ -3,61 +3,34 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ObstacleManager.h"
-#include "Components/BoxComponent.h"
+
+#include "SpawnerBase.h"
 #include "GameFramework/Actor.h"
+
 #include "ObstacleSpawner.generated.h"
 
 UCLASS()
-class PONKRUNNER_API AObstacleSpawner : public AActor
+class PONKRUNNER_API AObstacleSpawner : public ASpawnerBase
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	AObstacleSpawner();
 
 protected:
 	virtual void BeginPlay() override;
 
-private:
-	float GetIntervalTime() const;
-
-
 public:
-	
-	UFUNCTION(BlueprintCallable)
-	void SetSpawningEnabled(bool enabled);
-
-	UFUNCTION(BlueprintCallable)
-	void SpawnActor();
-
-	void UpdateSpawnPositionOrigin();
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	bool SpawningEnabled;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float SpawnInterval;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float SpawnIntervalRandomOffset;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UBoxComponent* Area;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<AActor> ActorToSpawn;
-
-
-private:
-	FTimerManager* _timerManager;
-	FTimerHandle _timerHandle;
+	virtual void SpawnActor() override;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> ObstacleTemplate;
+
+protected:
+	UPROPERTY(EditAnywhere)
 	AObstacleManager* _obManager;
-
-	void ScheduleSpawn();
-	void SpawnActorScheduled();
-
+	
+private:
 	FVector GetRandomAreaPosition() const;
+	
 };

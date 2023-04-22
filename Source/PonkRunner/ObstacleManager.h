@@ -3,10 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ObstacleBase.h"
+
 #include "ActorPool.h"
+#include "ObstacleBase.h"
+
 #include "GameFramework/Actor.h"
 #include "ObstacleManager.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnObstacleKilledEvent);
 
 UCLASS()
 class PONKRUNNER_API AObstacleManager : public AActor
@@ -14,31 +18,41 @@ class PONKRUNNER_API AObstacleManager : public AActor
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
 	AObstacleManager();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	AObstacleBase* SpawnObstacle(FVector const* position);
+	// template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int>>
+	template <typename T>
+	T* SpawnObstacle(FVector const* position);
 
+	UFUNCTION(BlueprintCallable)
 	void DespawnObstacle(AObstacleBase* obstacle);
+	
+	UFUNCTION(BlueprintCallable)
+	void ClearObstacles();
+	
+	UPROPERTY()
+	FOnObstacleKilledEvent OnObstacleKilledEvent;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> ObstacleTemplate;
-	
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> TestTemplate;
-	
 	UPROPERTY(EditAnywhere)
 	AActor* WorldAnchor;
 
 private:
+	UPROPERTY()
 	TArray<AObstacleBase*> _obstacles;
 };
+
+
+template <typename T>
+T* AObstacleManager::SpawnObstacle(FVector const* position)
+{
+	T* obstacle = ActorPool<T>::Spawn(position);
+	_obstacles.Add(obstacle);
+	return obstacle;
+}

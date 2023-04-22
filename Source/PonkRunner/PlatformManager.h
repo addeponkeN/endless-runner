@@ -21,11 +21,15 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	void SetTexturePanningSpeed(float speed);
+
+	void SetDifficulty(float difficulty);
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> PlatformTemplate;
+	TSubclassOf<APlatformBase> PlatformTemplate;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> WallTemplate;
 
 	UPROPERTY(EditAnywhere)
 	APlatformBase* Template;
@@ -39,11 +43,9 @@ public:
 	AActor* WorldAnchor;
 
 private:
-
 	void PlacePlatform(APlatformBase* platform);
-	
-	APlatformBase* _lastPlatform;
 
-	int32 _lastPlatformIndex;
+	// APlatformBase* _lastPlatform;
+	// int32 _lastPlatformIndex;
 	float _platformFrontPosition;
 };

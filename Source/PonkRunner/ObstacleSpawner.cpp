@@ -3,71 +3,34 @@
 
 #include "ObstacleSpawner.h"
 
+#include "ObstacleManager.h"
+#include "ObstacleBase.h"
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values
 AObstacleSpawner::AObstacleSpawner()
 {
-	//	using the TimerManager instead of Tick() for increased performance
 	PrimaryActorTick.bCanEverTick = false;
-
-	Area = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawnArea"));
-	RootComponent = Area;
 }
 
 void AObstacleSpawner::BeginPlay()
 {
 	Super::BeginPlay();
-	_timerManager = &GetWorld()->GetTimerManager();
+	ActorPool<AObstacleBase>::Init(GetWorld(), ObstacleTemplate);
 	_obManager = Cast<AObstacleManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AObstacleManager::StaticClass()));
-	if (SpawningEnabled)
-		ScheduleSpawn();
-}
-
-float AObstacleSpawner::GetIntervalTime() const
-{
-	return SpawnInterval + FMath::FRandRange(-SpawnIntervalRandomOffset, SpawnIntervalRandomOffset);
-}
-
-void AObstacleSpawner::SetSpawningEnabled(const bool enabled)
-{
-	SpawningEnabled = enabled;
-	if (SpawningEnabled)
-	{
-		ScheduleSpawn();
-	}
-	else
-	{
-		_timerManager->ClearTimer(_timerHandle);
-	}
 }
 
 void AObstacleSpawner::SpawnActor()
 {
-	UpdateSpawnPositionOrigin();
-	const FVector SpawnPosition = GetRandomAreaPosition();
-	_obManager->SpawnObstacle(&SpawnPosition);
-}
+	Super::SpawnActor();
 
-void AObstacleSpawner::UpdateSpawnPositionOrigin()
-{
-	const float offsetFromAnchor = 1200.f;
-	FVector anchor = _obManager->WorldAnchor->GetActorLocation();
-	FVector position = FVector(anchor.X + offsetFromAnchor, 0.f, 0.f);
+	//	update position of the spawner
+	constexpr float offsetFromAnchor = 1500.f;
+	const FVector anchor = _obManager->WorldAnchor->GetActorLocation();
+	const FVector position = FVector(anchor.X + offsetFromAnchor, 0.f, 10.f);
 	SetActorLocation(position);
-}
-
-void AObstacleSpawner::ScheduleSpawn()
-{
-	const float Time = GetIntervalTime();
-	_timerManager->SetTimer(_timerHandle, this, &AObstacleSpawner::SpawnActorScheduled, Time, false);
-}
-
-void AObstacleSpawner::SpawnActorScheduled()
-{
-	SpawnActor();
-	if (SpawningEnabled)
-		ScheduleSpawn();
+	
+	const FVector SpawnPosition = GetRandomAreaPosition();
+	_obManager->SpawnObstacle<AObstacleBase>(&SpawnPosition);
 }
 
 FVector AObstacleSpawner::GetRandomAreaPosition() const

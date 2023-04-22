@@ -3,14 +3,12 @@
 
 #include "WeaponSlot.h"
 
-#include "PonkRunner.h"
 #include "WeaponController.h"
 
 // Sets default values for this component's properties
 UWeaponSlot::UWeaponSlot()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	
 }
 
 
@@ -28,16 +26,13 @@ void UWeaponSlot::BeginPlay()
 	AActor* owner = GetOwner();
 	UWeaponController* controller = Cast<UWeaponController>(
 		owner->GetComponentByClass(UWeaponController::StaticClass()));
+	
 	if (controller)
 	{
-		LOGI("set weapon controller");
 		controller->OnFireEvent.AddDynamic(this, &UWeaponSlot::OnControllerFire);
 		controller->OnFireReleaseEvent.AddDynamic(this, &UWeaponSlot::OnControllerFireRelease);
 	}
-	else
-	{
-		LOGE("failed set weapon controller");
-	}
+
 }
 
 void UWeaponSlot::EquipWeapon(AWeaponBase* wep)

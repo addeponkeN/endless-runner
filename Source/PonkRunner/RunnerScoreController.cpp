@@ -5,27 +5,54 @@
 
 #include "PonkRunnerGameModeBase.h"
 
-// Sets default values for this component's properties
 URunnerScoreController::URunnerScoreController()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	Runner = Cast<ARunnerCharacter>(GetOwner());
+	Runner = Cast<ARunManCharacter>(GetOwner());
+	ScoreGainInterval = 0.2f;
+	ScoreGainedPerTick = 1.f;
 }
 
-
-// Called when the game starts
 void URunnerScoreController::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	APonkRunnerGameModeBase* gameMode = Cast<APonkRunnerGameModeBase>(GetWorld()->GetAuthGameMode());
-	
+
 	ScoreManager = gameMode->ScoreManager;
 	ScoreManager->OnScoreChangedEvent.AddDynamic(this, &URunnerScoreController::OnScoreChanged);
-	ScoreManager->StartTickScore();
+}
+
+void URunnerScoreController::StartTickScore()
+{
+	GetWorld()->GetTimerManager()
+	          .SetTimer(_timerHandle, this, &URunnerScoreController::AddTickScore, ScoreGainInterval, true);
+}
+
+void URunnerScoreController::StopTickScore()
+{
+	GetWorld()->GetTimerManager().ClearTimer(_timerHandle);
 }
 
 void URunnerScoreController::OnScoreChanged()
 {
 	Runner->HUD->SetScore(ScoreManager->CurrentScore);
+}
+
+void URunnerScoreController::AddTickScore()
+{
+	ScoreManager->AddScore(ScoreGainedPerTick);
+}
+
+void URunnerScoreController::SetEnabled(bool isEnabled)
+{
+	IsEnabled = isEnabled;
+	if (IsEnabled)
+	{
+		StartTickScore();
+	}
+	else
+	{
+		StopTickScore();
+	}
 }

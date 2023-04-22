@@ -3,33 +3,32 @@
 
 #include "Poolable.h"
 
-// Sets default values
 APoolable::APoolable()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
-// Called when the game starts or when spawned
-void APoolable::BeginPlay()
+void APoolable::Spawned()
 {
-	Super::BeginPlay();
+	SetActive(true);
 }
 
-// Called every frame
-void APoolable::Tick(float DeltaTime)
+void APoolable::Returned()
 {
-	Super::Tick(DeltaTime);
+	SetActive(false);
+}
 
+void APoolable::OnCreated(const FName& folderPath)
+{
+// #ifdef !UE_BUILD_SHIPPING
+	// SetFolderPath(folderPath);
+// #endif
 }
 
 void APoolable::SetActive(bool isActive)
 {
 	IsActive = isActive;
-	// SetHidden(!_isActive);
+	SetActorTickEnabled(IsActive);
+	SetActorEnableCollision(IsActive);
 	SetActorHiddenInGame(!IsActive);
 }
-
-
-

@@ -4,26 +4,28 @@
 #include "ObstacleManager.h"
 
 #include "ActorPool.h"
+#include "PonkRunner.h"
 #include "PonkRunnerGameModeBase.h"
+#include "WallObstacle.h"
 
-// Sets default values
 AObstacleManager::AObstacleManager()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-// Called when the game starts or when spawned
 void AObstacleManager::BeginPlay()
 {
 	Super::BeginPlay();
-	ActorPool<AObstacleBase>::Init(GetWorld(), ObstacleTemplate);
-
 	auto baseGameMode = GetWorld()->GetAuthGameMode();
 	auto gameMode = Cast<APonkRunnerGameModeBase>(baseGameMode);
 	auto gameMode2 = dynamic_cast<APonkRunnerGameModeBase*>(baseGameMode);
-	WorldAnchor = gameMode->WorldAnchor;
-	WorldAnchor = gameMode2->WorldAnchor;
+	WorldAnchor = gameMode->RunMan;
+	WorldAnchor = gameMode2->RunMan;
+
+	if (!WorldAnchor)
+	{
+		LOG("anchor NULL");
+	}
 }
 
 void AObstacleManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -32,13 +34,29 @@ void AObstacleManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	ActorPool<AObstacleBase>::Clear();
 }
 
-// Called every frame
 void AObstacleManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (!WorldAnchor)
+	{
+		auto baseGameMode = GetWorld()->GetAuthGameMode();
+		auto gameMode = Cast<APonkRunnerGameModeBase>(baseGameMode);
+		auto gameMode2 = dynamic_cast<APonkRunnerGameModeBase*>(baseGameMode);
+		WorldAnchor = gameMode->RunMan;
+		WorldAnchor = gameMode2->RunMan;
+		if (!WorldAnchor)
+		{
+			LOG("anchor NULL STILL");
+		}
+		else
+		{
+			LOG("anchor fixed");
+		}
+		return;
+	}
 	FVector endOfLine = WorldAnchor->GetActorLocation();
-	
+
 	for (int i = 0; i < _obstacles.Num(); ++i)
 	{
 		AObstacleBase* obstacle = _obstacles[i];
@@ -53,15 +71,31 @@ void AObstacleManager::Tick(float DeltaTime)
 	}
 }
 
-AObstacleBase* AObstacleManager::SpawnObstacle(FVector const* position)
-{
-	AObstacleBase* obstacle = ActorPool<AObstacleBase>::Spawn(position);
-	_obstacles.Add(obstacle);
-	return obstacle;
-}
-
 void AObstacleManager::DespawnObstacle(AObstacleBase* obstacle)
 {
 	_obstacles.Remove(obstacle);
-	ActorPool<AObstacleBase>::Return(obstacle);
+
+	if(obstacle->KilledByPlayer)
+	{
+		OnObstacleKilledEvent.Broadcast();
+	}
+
+	//	temporary band-aid
+	if (AWallObstacle* wall = Cast<AWallObstacle>(obstacle))
+	{
+		ActorPool<AWallObstacle>::Return(wall);
+	}
+	else
+	{
+		ActorPool<AObstacleBase>::Return(obstacle);
+	}
+}
+
+void AObstacleManager::ClearObstacles()
+{
+	int32 i = _obstacles.Num() - 1;
+	while (_obstacles.Num() > 0)
+	{
+		DespawnObstacle(_obstacles[i--]);
+	}
 }

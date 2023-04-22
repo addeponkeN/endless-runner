@@ -3,3 +3,9 @@
 
 #include "ActorPool.h"
 
+#include "BulletBase.h"
+#include "WallObstacle.h"
+
+template class ActorPool<AObstacleBase>;
+template class ActorPool<ABulletBase>;
+template class ActorPool<AWallObstacle>;

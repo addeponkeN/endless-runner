@@ -3,24 +3,9 @@
 
 #include "ScoreManager.h"
 
-#include "PonkRunner.h"
-
 UScoreManager::UScoreManager()
 {
 	CurrentScore = 0.f;
-	ScoreGainInterval = 0.25f;
-	ScoreGainedPerTick = 1.f;
-}
-
-void UScoreManager::StartTickScore()
-{
-	GetWorld()->GetTimerManager().SetTimer(_timerHandle, this, &UScoreManager::AddTickScore, ScoreGainInterval, true);
-	LOG("started tick score");
-}
-
-void UScoreManager::StopTickScore()
-{
-	GetWorld()->GetTimerManager().ClearTimer(_timerHandle);
 }
 
 void UScoreManager::AddScore(float score)
@@ -29,7 +14,8 @@ void UScoreManager::AddScore(float score)
 	OnScoreChangedEvent.Broadcast();
 }
 
-void UScoreManager::AddTickScore()
+void UScoreManager::ResetScore()
 {
-	AddScore(ScoreGainedPerTick);
+	CurrentScore = 0.f;
+	OnScoreChangedEvent.Broadcast();
 }

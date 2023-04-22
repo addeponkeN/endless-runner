@@ -1,59 +1,76 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "PlatformManager.h"
 
+#include "PonkRunner.h"
 #include "PonkRunnerGameModeBase.h"
 
-// Sets default values
 APlatformManager::APlatformManager()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 }
 
-// Called when the game starts or when spawned
 void APlatformManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	auto baseGameMode = GetWorld()->GetAuthGameMode();
+	AGameModeBase* baseGameMode = GetWorld()->GetAuthGameMode();
 	auto gameMode = Cast<APonkRunnerGameModeBase>(baseGameMode);
+	WorldAnchor = gameMode->RunMan;
 	auto gameMode2 = dynamic_cast<APonkRunnerGameModeBase*>(baseGameMode);
-	WorldAnchor = gameMode->WorldAnchor;
-	WorldAnchor = gameMode2->WorldAnchor;
+	WorldAnchor = gameMode2->RunMan;
 
-	_platformFrontPosition = -50.f;
 
+	//	spawn initial platforms
+	_platformFrontPosition = -100.f;
 	for (int i = 0; i < PlatformCount; ++i)
 	{
 		APlatformBase* platform = GetWorld()->SpawnActor<APlatformBase>(PlatformTemplate);
-		platform->SetFolderPath(TEXT("Platforms"));
+		// #ifdef !UE_BUILD_SHIPPING
+		// platform->SetFolderPath(TEXT("Platforms"));
+		// #endif
 		PlacePlatform(platform);
 		Platforms.Add(platform);
 	}
 
-	_lastPlatformIndex = 0;
-	_lastPlatform = Platforms[_lastPlatformIndex];
+	SetTexturePanningSpeed(400.f);
 }
 
-// Called every frame
-void APlatformManager::Tick(float DeltaTime)
+void APlatformManager::SetTexturePanningSpeed(float speed)
 {
-	Super::Tick(DeltaTime);
+	FLinearColor pannerSpeed;
+	pannerSpeed.R = speed * .01f;
+	pannerSpeed.G = 0.f;
+	pannerSpeed.B = 0.f;
+	pannerSpeed.A = 1.f;
+	for (APlatformBase* platform : Platforms)
+	{
+		TArray<UStaticMeshComponent*> meshes;
+		platform->GetComponents<UStaticMeshComponent>(meshes);
+		for (UStaticMeshComponent* mesh : meshes)
+		{
+			UMaterialInterface* material = mesh->GetMaterial(0);
+			UMaterialInstanceDynamic* dynamicMaterial = Cast<UMaterialInstanceDynamic>(material);
 
-	// FVector anchor = WorldAnchor->GetActorLocation();
-	// float endOfLine = anchor.X - 200.f;
+			if (!dynamicMaterial)
+			{
+				dynamicMaterial = UMaterialInstanceDynamic::Create(material, mesh);
+				dynamicMaterial->SetVectorParameterValue(TEXT("PannerSpeed"), pannerSpeed);
+				mesh->SetMaterial(0, dynamicMaterial);
+			}
+			else
+			{
+				dynamicMaterial->SetVectorParameterValue(TEXT("PannerSpeed"), pannerSpeed);
+			}
+		}
+	}
+}
 
-	// ABasePlatform* p = _lastPlatform;
-	// if (p->GetActorLocation().X < endOfLine)
-	// {
-	// PlacePlatform(p);
-	// _lastPlatformIndex++;
-	// if (_lastPlatformIndex >= Platforms.Num())
-	// _lastPlatformIndex = 0;
-	// _lastPlatform = Platforms[_lastPlatformIndex];
-	// }
+void APlatformManager::SetDifficulty(float difficulty)
+{
+	const float speed = FMath::Lerp(50.f, 600.f, difficulty);
+	LOG(FString::FromInt(speed));
+	SetTexturePanningSpeed(speed);
 }
 
 void APlatformManager::PlacePlatform(APlatformBase* platform)
