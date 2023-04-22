@@ -33,13 +33,13 @@ void ARunManCharacter::BeginPlay()
 
 	// WeaponController = Cast<UWeaponController>(GetComponentByClass(UWeaponController::StaticClass()));
 
-	RunController = Cast<ARunnerPlayerController>(GetController());
-	DisableInput(RunController);
+	RunPlayerController = Cast<ARunnerPlayerController>(GetController());
+	DisableInput(RunPlayerController);
 
 	//	setup HUD
 	if (HUDClass)
 	{
-		HUD = CreateWidget<URunnerHUD>(RunController, HUDClass);
+		HUD = CreateWidget<URunnerHUD>(RunPlayerController, HUDClass);
 		check(HUD);
 		HUD->AddToPlayerScreen();
 		HUD->SetVisibility(ESlateVisibility::Hidden);

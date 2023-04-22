@@ -15,9 +15,11 @@ HighScoreManager::~HighScoreManager()
 
 void HighScoreManager::AddEntry(const FString& name, const int32 score)
 {
-	FHighScoreEntry* entry = new FHighScoreEntry(name, score);
+	const FString trimmedName = name.TrimChar(':');
+	FHighScoreEntry* entry = new FHighScoreEntry(trimmedName, score);
 	Entries.Add(entry);
 	SortEntries();
+	SaveHighScores();
 }
 
 void HighScoreManager::LoadHighScores()
@@ -31,19 +33,19 @@ void HighScoreManager::LoadHighScores()
 		FString data = input[i];
 		FString name;
 		FString score;
-		data.Split(data, &name, &score);
-		FHighScoreEntry* item = new FHighScoreEntry(data, FCString::Atoi(*score));
+		data.Split(":", &name, &score);
+		FHighScoreEntry* item = new FHighScoreEntry(name, FCString::Atoi(*score));
 		Entries.Add(item);
 	}
 }
 
 void HighScoreManager::SaveHighScores()
 {
-	AddEntry(TEXT("john"), 69);
-	AddEntry(TEXT("sven"), 33);
-	AddEntry(TEXT("cone"), 41);
-	AddEntry(TEXT("kony"), 2012);
-	
+	// AddEntry(TEXT("john"), 69);
+	// AddEntry(TEXT("sven"), 33);
+	// AddEntry(TEXT("cone"), 41);
+	// AddEntry(TEXT("kony"), 2012);
+
 	TArray<FString> output;
 
 	for (int i = 0; i < Entries.Num(); ++i)
@@ -67,5 +69,3 @@ FString HighScoreManager::GetFullPath() const
 {
 	return FPaths::Combine(*FPaths::ProjectDir(), FileName);
 }
-
-

@@ -27,6 +27,7 @@ public:
 	UFUNCTION()
 	void StartGame();
 
+	UFUNCTION()
 	void QuitGame();
 
 	UFUNCTION()

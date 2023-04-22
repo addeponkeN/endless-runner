@@ -28,9 +28,10 @@ void APonkRunnerGameModeBase::InitGameState()
 	Super::InitGameState();
 
 	HighScoreManager = new class HighScoreManager;
-	HighScoreManager->SaveHighScores();
+	HighScoreManager->LoadHighScores();
 
 	ScoreManager = NewObject<UScoreManager>(this);
+	
 
 	const bool isDefaultPawn = DefaultPawnClass == ADefaultPawn::StaticClass();
 
@@ -169,11 +170,11 @@ void APonkRunnerGameModeBase::SetStateMenu() const
 	SetRunnerInputEnabled(false);
 
 	//	show cursor
-	RunMan->RunController->SetCursorEnabled(true);
+	RunMan->RunPlayerController->SetCursorEnabled(true);
 
 	ScoreManager->ResetScore();
 
-	RunMan->RunController->SetPause(false);
+	RunMan->RunPlayerController->SetPause(false);
 
 	RunMan->ResetRunMan();
 
@@ -199,7 +200,7 @@ void APonkRunnerGameModeBase::SetStateGameOver() const
 
 	SpawnerManager->SetSpawnersEnabled(false);
 
-	RunMan->RunController->SetPause(true);
+	RunMan->RunPlayerController->SetPause(true);
 
 	DifficultyManager->Stop();
 
@@ -214,7 +215,7 @@ void APonkRunnerGameModeBase::SetStateGameOver() const
 
 void APonkRunnerGameModeBase::SetRunnerInputEnabled(bool enabled) const
 {
-	ARunnerPlayerController* controller = RunMan->RunController;
+	ARunnerPlayerController* controller = RunMan->RunPlayerController;
 
 	if (enabled)
 	{
