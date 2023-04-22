@@ -5,6 +5,7 @@
 
 #include "HighScoreEntry.h"
 #include "HighScoreTextBlock.h"
+#include "PonkRunner.h"
 #include "PonkRunnerGameModeBase.h"
 
 void UMainMenuGui::NativeConstruct()
@@ -13,6 +14,9 @@ void UMainMenuGui::NativeConstruct()
 
 	BtStart->OnClicked.AddDynamic(this, &UMainMenuGui::StartGame);
 	BtQuit->OnClicked.AddDynamic(this, &UMainMenuGui::QuitGame);
+
+	LOG("setup button events");
+	
 }
 
 void UMainMenuGui::StartGame()

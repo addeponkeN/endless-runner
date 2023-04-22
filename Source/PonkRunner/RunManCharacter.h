@@ -56,7 +56,7 @@ public:
 	UHealthComponent* Health;
 
 	UPROPERTY()
-	ARunnerPlayerController* RunController;
+	ARunnerPlayerController* RunPlayerController;
 
 	// UPROPERTY()
 	// UWeaponController* WeaponController;
