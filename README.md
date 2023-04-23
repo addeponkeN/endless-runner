@@ -11,7 +11,7 @@ Futuregames assignment - Endless Runner in Unreal
 
 ## - Spawning platforms over a pre-defined area of the screen which scroll past the player at a particular rate
 
-Instead of spawning platforms im placing static platforms with panning textures. This will give the effect that the platforms are moving at a very low cost.
+Instead of spawning platforms I'm placing static platforms with panning textures. This will give the effect that the platforms are moving at a very low cost.
 
 (this is the only blueprint code in the project)
 
