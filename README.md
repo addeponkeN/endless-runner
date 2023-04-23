@@ -13,7 +13,7 @@ Futuregames assignment - Endless Runner in Unreal
 
 Instead of spawning platforms I'm placing static platforms with panning textures. This will give the effect that the platforms are moving at a very low cost.
 
-(this is the only blueprint code in the project)
+(this is the only blueprint graph in the project)
 
 ![image](https://user-images.githubusercontent.com/17746816/233837671-b53b601b-77fc-48de-a419-3f5924921833.png)
 ![UnrealEditor_xW57tjZvR8](https://user-images.githubusercontent.com/17746816/233839406-9e097a95-22cb-4480-8c5e-46fb5b425fe2.gif)
