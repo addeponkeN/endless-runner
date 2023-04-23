@@ -9,7 +9,7 @@ Futuregames assignment - Endless Runner in Unreal
 
 # Instructions
 
-### - Spawning platforms over a pre-defined area of the screen which scroll past the player at a particular rate
+## - Spawning platforms over a pre-defined area of the screen which scroll past the player at a particular rate
 
 Instead of spawning platforms im placing static platforms with panning textures. This will give the effect that the platforms are moving at a very low cost.
 
@@ -19,7 +19,7 @@ Instead of spawning platforms im placing static platforms with panning textures.
 
 
 
-### - Spawning projectiles/enemies which spawn over a pre-defined area of the screen which scroll past the player at a particular rate 
+## - Spawning projectiles/enemies which spawn over a pre-defined area of the screen which scroll past the player at a particular rate 
 
 I have 2 obstacles so far - [Wall](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/WallObstacle.cpp) and Rock, which are derived from (or is) [ObstacleBase](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/ObstacleBase.cpp). The player can shoot the rock with a weapon to destroy it for extra score. The wall cannot be destroyed.
 If the player is hit by either they lose 1 life.
