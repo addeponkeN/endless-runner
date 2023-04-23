@@ -24,7 +24,7 @@ You can control the speed of the panning in code in the [PlatformManager](https:
 
 ## - Spawning projectiles/enemies which spawn over a pre-defined area of the screen which scroll past the player at a particular rate 
 
-I have 2 obstacles so far - [Wall](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/WallObstacle.cpp) and Rock, which are derived from (or is) [ObstacleBase](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/ObstacleBase.cpp). The player can shoot the rock with a weapon to destroy it for extra score. The wall cannot be destroyed.
+I have 2 obstacles so far - [Wall](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/WallObstacle.cpp) and Rock (Rock is a BP derived from ObstacleBase), which are derived from [ObstacleBase](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/ObstacleBase.cpp). The player can shoot the rock with a weapon to destroy it for extra score. The wall cannot be destroyed.
 If the player is hit by either they lose 1 life.
 
 Walls and rocks are spawned by [WallSpawner](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/WallSpawner.cpp) and [ObstacleSpawner](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/ObstacleSpawner.cpp) which are derived from [SpawnerBas](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/SpawnerBase.cpp)
