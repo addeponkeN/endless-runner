@@ -9,7 +9,7 @@ Futuregames assignment - Endless Runner in Unreal
 
 # Instructions
 
-#### - Spawning platforms over a pre-defined area of the screen which scroll past the player at a particular rate
+### - Spawning platforms over a pre-defined area of the screen which scroll past the player at a particular rate
 
 Instead of spawning platforms im placing static platforms with panning textures. This will give the effect that the platforms are moving at a very low cost.
 
@@ -17,5 +17,5 @@ Instead of spawning platforms im placing static platforms with panning textures.
 ![image](https://user-images.githubusercontent.com/17746816/233837671-b53b601b-77fc-48de-a419-3f5924921833.png)
 
 
-#### - Spawning projectiles/enemies which spawn over a pre-defined area of the screen which scroll past the player at a particular rate 
+### - Spawning projectiles/enemies which spawn over a pre-defined area of the screen which scroll past the player at a particular rate 
 
