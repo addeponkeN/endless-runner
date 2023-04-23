@@ -2,8 +2,7 @@
 
 ### [SOURCE](https://github.com/addeponkeN/endless-runner/archive/refs/tags/part1_release.zip) / [RELEASE](https://github.com/addeponkeN/endless-runner/releases/download/part1_release/EndlessRunner_Part1.zip)
 
-![image](https://user-images.githubusercontent.com/17746816/233846843-4f68ab12-b1fd-46d1-a450-f54fa04cbb02.png)
-<img src="[https://github.com/favicon.ico](https://user-images.githubusercontent.com/17746816/233846843-4f68ab12-b1fd-46d1-a450-f54fa04cbb02.png)" width="48">
+![image](https://user-images.githubusercontent.com/17746816/233847127-0e95d502-e5f6-4ae8-83c8-390e422849b4.png)
 
 
 # Project Settings
