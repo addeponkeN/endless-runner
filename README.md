@@ -1,10 +1,7 @@
 # DOWNLOADS
-## PART 1
-### [SOURCE](https://github.com/addeponkeN/endless-runner/archive/refs/tags/part1_release.zip) / [RELEASE](https://github.com/addeponkeN/endless-runner/releases/download/part1_release/EndlessRunner_Part1.zip)
 
+#### PART 1 - [SOURCE](https://github.com/addeponkeN/endless-runner/archive/refs/tags/part1_release.zip) / [RELEASE](https://github.com/addeponkeN/endless-runner/releases/download/part1_release/EndlessRunner_Part1.zip)
 
-# endless-runner
-Futuregames assignment - Endless Runner in Unreal
 
 # Project Settings
 - Blank, No Starter Content, C++
