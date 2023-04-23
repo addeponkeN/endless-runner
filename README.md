@@ -26,7 +26,7 @@ If the player is hit by either they lose 1 life.
 
 Walls and rocks are spawned by [WallSpawner](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/WallSpawner.cpp) and [ObstacleSpawner](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/ObstacleSpawner.cpp) which are derived from [SpawnerBas](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/SpawnerBase.cpp)
 
-## Pooling
+### Pooling
 
 Obstacles and Bullets are pooled using the generic [ActorPool](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/ActorPool.h)
 
