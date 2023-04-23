@@ -58,6 +58,9 @@ The [ScoreManager](https://github.com/addeponkeN/endless-runner/blob/part1/Sourc
 
 The [ScoreController](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/RunnerScoreController.cpp) increments score periodically to the ScoreManager.
 
+The [HighScoreManager](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/HighScoreManager.cpp) handles all highscore entries, saving & loading. A highscore entry is added when the game is over (only if a name was specified). The highscore list is sorted and saved when a new entry is added.
+The high scores are stored in a .txt file.
+
 
 ## 5. 3 lives in each game
 
