@@ -42,10 +42,35 @@ How a bullet is created/spawned:
 ![image](https://user-images.githubusercontent.com/17746816/233838763-b2e7374c-6acd-4733-a4a7-1cee58a250b4.png)
 
 
-Before I can spawn a type with the pool you need to initialize it with a template object
+Before I can spawn a type with the pool you need to register/initialize it with a template object
 
 ![image](https://user-images.githubusercontent.com/17746816/233838969-4ebd1442-1c24-4554-8859-4015d0f4aaf2.png)
 
 
+## 3. Increasing difficulty over time
+
+Difficulty is a value between 0 and 1. The [DifficutlyManager](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/DifficultyManager.cpp) will increment the value and broadcoast when it does. The spawners will listen to this broadcast and adjust the spawnrate with lerp(minRate, maxRate, difficulty).
+
+
+## 4. Accumulated points which increase as time progresses and is saved in a high score list shown at startup
+
+The [ScoreManager](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/ScoreManager.cpp) only contains a score value and broadcasts an event when the score has been changed. Things like UI listens to this.
+
+The [ScoreController](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/RunnerScoreController.cpp) increments score periodically to the ScoreManager.
+
+
+## 5. 3 lives in each game
+
+The player object has a [HealthComponent](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/HealthComponent.cpp) attached to it.
+It is set to 3 lives in the editor. The [PonkRunnerGameModeBase](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/PonkRunnerGameModeBase.cpp) listens to the player's HealthComponent ValueChanged event and if it's 0, the game state is set to GameOver.
+
+## 6. Projectile to player collision
+
+Currently the player class ([RunManCharacter](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/RunManCharacter.cpp)) overloads the OnColliderOverlapBegin() function and does a check if its hit by an obstacle.
+I'm changing this later so that the player will have an [ObstacleCollider/ObstacleReceiver](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/ObstacleCollider.cpp) component attached to it. It will handle all collision with obstacles and broadcast an event that the player class will listen to.
+
+## 7. Basic keyboard controls
+
+Currently using the old deprecated input system.
 
 
