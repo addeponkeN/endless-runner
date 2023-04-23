@@ -2,7 +2,7 @@
 
 ### [SOURCE](https://github.com/addeponkeN/endless-runner/archive/refs/tags/part1_release.zip) / [RELEASE](https://github.com/addeponkeN/endless-runner/releases/download/part1_release/EndlessRunner_Part1.zip)
 
-![image](https://user-images.githubusercontent.com/17746816/233846843-4f68ab12-b1fd-46d1-a450-f54fa04cbb02.png)
+![image](https://user-images.githubusercontent.com/17746816/233846843-4f68ab12-b1fd-46d1-a450-f54fa04cbb02.png =200x200)
 
 
 # Project Settings
