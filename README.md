@@ -5,9 +5,7 @@ Futuregames assignment - Endless Runner in Unreal
 - Blank, No Starter Content, C++
 
 ![image](https://user-images.githubusercontent.com/17746816/233835677-4fdd1e05-0189-4275-bd91-4d8db25ff4fe.png)
-![UnrealEditor_xW57tjZvR8](https://user-images.githubusercontent.com/17746816/233839406-9e097a95-22cb-4480-8c5e-46fb5b425fe2.gif)
 
-You can control the speed of the panning in code in the [PlatformManager](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/PlatformManager.cpp) by calling the "SetTexturePanningSpeed(float speed)" function.
 
 # Instructions
 
@@ -18,7 +16,9 @@ Instead of spawning platforms im placing static platforms with panning textures.
 (this is the only blueprint code in the project)
 
 ![image](https://user-images.githubusercontent.com/17746816/233837671-b53b601b-77fc-48de-a419-3f5924921833.png)
+![UnrealEditor_xW57tjZvR8](https://user-images.githubusercontent.com/17746816/233839406-9e097a95-22cb-4480-8c5e-46fb5b425fe2.gif)
 
+You can control the speed of the panning in code in the [PlatformManager](https://github.com/addeponkeN/endless-runner/blob/part1/Source/PonkRunner/PlatformManager.cpp) by calling the "SetTexturePanningSpeed(float speed)" function.
 
 
 
