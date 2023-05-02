@@ -30,9 +30,6 @@ public:
 	void AddTickScore();
 
 	UFUNCTION()
-	void OnScoreChanged();
-
-	UFUNCTION()
 	void SetEnabled(bool isEnabled);
 
 	UPROPERTY()

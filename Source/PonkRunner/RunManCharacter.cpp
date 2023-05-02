@@ -10,7 +10,7 @@
 
 ARunManCharacter::ARunManCharacter()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	UCapsuleComponent* capsuleComponent = GetCapsuleComponent();
 
@@ -33,17 +33,14 @@ void ARunManCharacter::BeginPlay()
 
 	// WeaponController = Cast<UWeaponController>(GetComponentByClass(UWeaponController::StaticClass()));
 
-	RunPlayerController = Cast<ARunnerPlayerController>(GetController());
-	DisableInput(RunPlayerController);
-
 	//	setup HUD
-	if (HUDClass)
-	{
-		HUD = CreateWidget<URunnerHUD>(RunPlayerController, HUDClass);
-		check(HUD);
-		HUD->AddToPlayerScreen();
-		HUD->SetVisibility(ESlateVisibility::Hidden);
-	}
+	// if (HUDClass)
+	// {
+	// HUD = CreateWidget<URunnerHUD>(RunPlayerController, HUDClass);
+	// check(HUD);
+	// HUD->AddToPlayerScreen();
+	// HUD->SetVisibility(ESlateVisibility::Hidden);
+	// }
 
 	// const FVector startPosition = FVector(0.f, 0.f, 10.f);
 	// SetActorLocation(startPosition);
@@ -53,7 +50,7 @@ void ARunManCharacter::BeginPlay()
 	if (Collider)
 	{
 		Collider->OnComponentBeginOverlap.AddDynamic(this, &ARunManCharacter::OnColliderOverlapBegin);
-		LOG("listening to ObstacleCollider");
+		// LOG("listening to ObstacleCollider");
 	}
 
 	Health->OnValueChangedEvent.AddDynamic(this, &ARunManCharacter::OnHealthChanged);
@@ -65,34 +62,51 @@ void ARunManCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 
 	//	not sure if this is needed...
-	if (HUD)
+	// if (HUD)
+	// {
+	// HUD->RemoveFromParent();
+	// HUD = nullptr;
+	// }
+}
+
+void ARunManCharacter::FinalizeCharacter()
+{
+	RunPlayerController = Cast<ARunnerPlayerController>(GetController());
+	DisableInput(RunPlayerController);
+
+	if (RunPlayerController)
 	{
-		HUD->RemoveFromParent();
-		HUD = nullptr;
+		ULocalPlayer* local = RunPlayerController->GetLocalPlayer();
+		if (local)
+		{
+			PlayerIndex = local->GetLocalPlayerIndex();
+		}
+	}
+
+	UInputComponent* input = Cast<UInputComponent>(GetComponentByClass(UInputComponent::StaticClass()));
+
+	if (PlayerIndex == 0)
+	{
+		//	HACK: player1 controls both p1 & p2
+		input->BindAxis(TEXT("P1_MoveHorizontal"), this, &ARunManCharacter::P1_MoveHorizontal);
+		input->BindAxis(TEXT("P2_MoveHorizontal"), this, &ARunManCharacter::P2_MoveHorizontal);
 	}
 }
 
-void ARunManCharacter::Tick(float DeltaTime)
+void ARunManCharacter::UpdateRunner(float dt)
 {
-	Super::Tick(DeltaTime);
-
 	// HACK: had no effect when doing this in BeginPlay(), so im setting it here instead...
 	SetActorRotation(FRotator::ZeroRotator);
 
 	if (_direction > 0.f || _direction < 0.f)
 	{
-		MoveHorizontalRelativeToActor(DeltaTime);
+		MoveHorizontalRelativeToActor(dt);
 	}
-
-	// move forward
-	// AddMovementInput(GetActorForwardVector(), MoveSpeed * DeltaTime);
 }
 
 void ARunManCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	PlayerInputComponent->BindAxis(TEXT("MoveHorizontal"), this, &ARunManCharacter::MoveHorizontal);
-	PlayerInputComponent->BindAxis(TEXT("Jump"), this, &ARunManCharacter::RunManJump);
 }
 
 void ARunManCharacter::ResetRunMan()
@@ -129,15 +143,29 @@ void ARunManCharacter::OnColliderOverlapBegin(
 
 void ARunManCharacter::OnHealthChanged()
 {
-	HUD->SetHealth(Health->Value);
+	// HUD->SetHealth(Health->Value);
 }
 
-void ARunManCharacter::MoveHorizontal(float direction)
+void ARunManCharacter::P1_MoveHorizontal(float direction)
 {
 	_direction = direction;
+	if (direction != 0.f)
+	{
+		LOG(FString::Printf(TEXT("P%i moving"), PlayerIndex));
+	}
+}
+
+void ARunManCharacter::P2_MoveHorizontal(float direction)
+{
+	OtherRunner->_direction = direction;
+	if (direction != 0.f)
+	{
+		LOG(FString::Printf(TEXT("P%i moving"), OtherRunner->PlayerIndex));
+	}
 }
 
 void ARunManCharacter::MoveHorizontalRelativeToActor(float dt)
 {
 	AddMovementInput(GetActorRightVector(), _direction * MoveSpeed * dt);
 }
+

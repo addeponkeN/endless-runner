@@ -21,7 +21,7 @@ void UMainMenuGui::NativeConstruct()
 
 void UMainMenuGui::StartGame()
 {
-	const APonkRunnerGameModeBase* gameMode = Cast<APonkRunnerGameModeBase>(GetWorld()->GetAuthGameMode());
+	APonkRunnerGameModeBase* gameMode = Cast<APonkRunnerGameModeBase>(GetWorld()->GetAuthGameMode());
 	gameMode->SetStatePlay();
 }
 

@@ -22,10 +22,10 @@ void AObstacleManager::BeginPlay()
 	WorldAnchor = gameMode->RunMan;
 	WorldAnchor = gameMode2->RunMan;
 
-	if (!WorldAnchor)
-	{
-		LOG("anchor NULL");
-	}
+	// if (!WorldAnchor)
+	// {
+		// LOG("anchor NULL");
+	// }
 }
 
 void AObstacleManager::EndPlay(const EEndPlayReason::Type EndPlayReason)

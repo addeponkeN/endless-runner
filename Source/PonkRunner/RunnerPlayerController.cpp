@@ -8,7 +8,6 @@
 void ARunnerPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	LOG("spioler");
 }
 
 void ARunnerPlayerController::SetCursorEnabled(bool enable)

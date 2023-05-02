@@ -20,7 +20,6 @@ void URunnerScoreController::BeginPlay()
 	APonkRunnerGameModeBase* gameMode = Cast<APonkRunnerGameModeBase>(GetWorld()->GetAuthGameMode());
 
 	ScoreManager = gameMode->ScoreManager;
-	ScoreManager->OnScoreChangedEvent.AddDynamic(this, &URunnerScoreController::OnScoreChanged);
 }
 
 void URunnerScoreController::StartTickScore()
@@ -32,11 +31,6 @@ void URunnerScoreController::StartTickScore()
 void URunnerScoreController::StopTickScore()
 {
 	GetWorld()->GetTimerManager().ClearTimer(_timerHandle);
-}
-
-void URunnerScoreController::OnScoreChanged()
-{
-	Runner->HUD->SetScore(ScoreManager->CurrentScore);
 }
 
 void URunnerScoreController::AddTickScore()

@@ -16,8 +16,8 @@ void UWeaponController::BeginPlay()
 	UInputComponent* input = Cast<UInputComponent>(owner->GetComponentByClass(UInputComponent::StaticClass()));
 	if (input)
 	{
-		input->BindAction(TEXT("Fire"), IE_Pressed, this, &UWeaponController::Fire);
-		input->BindAction(TEXT("Fire"), IE_Released, this, &UWeaponController::FireRelease);
+		input->BindAction(TEXT("P1_Fire"), IE_Pressed, this, &UWeaponController::Fire);
+		input->BindAction(TEXT("P1_Fire"), IE_Released, this, &UWeaponController::FireRelease);
 	}
 }
 

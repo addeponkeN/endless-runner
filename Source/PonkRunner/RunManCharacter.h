@@ -7,7 +7,6 @@
 #include "ObstacleCollider.h"
 #include "RunnerHUD.h"
 #include "RunnerPlayerController.h"
-#include "WeaponController.h"
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
 #include "RunManCharacter.generated.h"
@@ -27,8 +26,8 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	virtual void FinalizeCharacter();
+	virtual void UpdateRunner(float dt);
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -48,8 +47,8 @@ public:
 	UFUNCTION()
 	void OnHealthChanged();
 
-	UPROPERTY()
-	URunnerHUD* HUD;
+	// UPROPERTY()
+	// URunnerHUD* HUD;
 
 	// UObstacleCollider* ObstacleReceiver;
 	UPROPERTY(EditAnywhere)
@@ -58,12 +57,18 @@ public:
 	UPROPERTY()
 	ARunnerPlayerController* RunPlayerController;
 
+	UPROPERTY(VisibleAnywhere)
+	ARunManCharacter* OtherRunner;
+
 	// UPROPERTY()
 	// UWeaponController* WeaponController;
-	
-private:
+
 	UPROPERTY()
 	float _direction;
+
+private:
+	UPROPERTY(VisibleAnywhere)
+	int32 PlayerIndex;
 
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* RunnerMesh;
@@ -74,10 +79,12 @@ private:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* Collider;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<URunnerHUD> HUDClass;
+
+	// UPROPERTY(EditAnywhere)
+	// TSubclassOf<URunnerHUD> HUDClass;
 
 
-	void MoveHorizontal(float direction);
+	void P1_MoveHorizontal(float direction);
+	void P2_MoveHorizontal(float direction);
 	void MoveHorizontalRelativeToActor(float direction);
 };

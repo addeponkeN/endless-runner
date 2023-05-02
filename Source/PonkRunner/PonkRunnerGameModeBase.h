@@ -11,6 +11,7 @@
 #include "DifficultyManager.h"
 #include "HighScoreManager.h"
 #include "PlatformManager.h"
+#include "PlayerManager.h"
 #include "GameFramework/GameModeBase.h"
 #include "PonkRunnerGameModeBase.generated.h"
 
@@ -28,6 +29,7 @@ public:
 	
 	static APonkRunnerGameModeBase* GetMode(const UWorld* world);
 	virtual void InitGameState() override;
+	void SetPointers();
 
 protected:
 	virtual void BeginPlay() override;
@@ -35,6 +37,7 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 
 	void InitDifficultyManager();
+	void ScoreValueChanged();
 
 public:
 	UFUNCTION()
@@ -46,11 +49,11 @@ public:
 	UFUNCTION()
 	void ObstacleKilled();
 
-	void SetStatePlay() const;
+	void SetStatePlay();
 	void SetStateMenu() const;
 	void SetStateGameOver() const;
 
-	void SetRunnerInputEnabled(bool enabled) const;
+	// void SetRunnerInputEnabled(bool enabled) const;
 
 	UPROPERTY(EditAnywhere, NoClear)
 	TSubclassOf<ARunManCharacter> CustomRunnerCharacterClass = ARunManCharacter::StaticClass();
@@ -69,6 +72,9 @@ public:
 	APlatformManager* PlatformManager;
 
 	UPROPERTY(EditAnywhere)
+	APlayerManager* PlayerManager;
+
+	UPROPERTY(EditAnywhere)
 	AObstacleManager* ObstacleManager;
 
 	//	aka the player
@@ -85,10 +91,19 @@ public:
 	UMainMenuGui* MenuGui;
 
 	UPROPERTY(EditAnywhere)
+	URunnerHUD* RunnerHud;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<URunnerHUD> RunnerHudTemplate;
+	
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UGameOverPanel> GameOverPanelTemplate;
 
 	UPROPERTY(EditAnywhere)
 	UGameOverPanel* GameOverPanel;
 
 	HighScoreManager* HighScoreManager;
+
+private:
+	bool _inited;
 };

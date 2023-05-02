@@ -15,7 +15,7 @@
 
 static void PonkLog(FColor color, const FString& msg)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, color, msg);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, color, msg);
 }
 
 //	## ####### ##

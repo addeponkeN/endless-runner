@@ -3,7 +3,6 @@
 
 #include "RunnerHUD.h"
 
-
 void URunnerHUD::SetHealth(const int32& health)
 {
 	FText healthDisplayText = FText::AsNumber(health);
