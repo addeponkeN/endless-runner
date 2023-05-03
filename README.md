@@ -26,7 +26,7 @@ A better way would be to have a third player, "Player 0". Player 0 takes all inp
 
 ## 2. Randomly explode an obstacle when the player 'dodges' an obstacle
 
-The [RandomObstacleExploder](https://github.com/addeponkeN/endless-runner/blob/part2/Source/PonkRunner/RandomObstacleExploder.cpp) is an ActorComponent that is attached to the ObstacleManager. It will randomnly explode a random obstacle when an obstacle goes out of bounds (aka dodged).
+The [RandomObstacleExploder](https://github.com/addeponkeN/endless-runner/blob/part2/Source/PonkRunner/RandomObstacleExploder.cpp) is an ActorComponent that is attached to the [ObstacleManager](https://github.com/addeponkeN/endless-runner/blob/part2/Source/PonkRunner/ObstacleManager.cpp). It will randomnly explode a random obstacle when an obstacle goes out of bounds (aka dodged).
 
 
 
