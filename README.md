@@ -23,7 +23,10 @@ Since UE out-of-the-box Character only supports 1 playable character per control
 
 A better way would be to have a third player, "Player 0". Player 0 takes all input from the keyboard and redirects it to P1 and P2. But above implementation was faster to implement.
 
-The [RandomObstacleExploder](https://github.com/addeponkeN/endless-runner/blob/part2/Source/PonkRunner/RandomObstacleExploder.cpp) will randomnly explode a random obstacle when an obstacle goes out of bounds (aka dodged).
+
+## 2. Randomly explode an obstacle when the player 'dodges' an obstacle
+
+The [RandomObstacleExploder](https://github.com/addeponkeN/endless-runner/blob/part2/Source/PonkRunner/RandomObstacleExploder.cpp) is an ActorComponent that is attached to the ObstacleManager. It will randomnly explode a random obstacle when an obstacle goes out of bounds (aka dodged).
 
 
 
