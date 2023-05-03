@@ -74,6 +74,8 @@ void APlayerManager::SetRunnerInputEnabled(bool enabled) const
 		ARunManCharacter* runner = Runners[i];
 		ARunnerPlayerController* controller = runner->RunPlayerController;
 
+		runner->WeaponController->FireRelease();
+		
 		if (!controller)
 		{
 			continue;

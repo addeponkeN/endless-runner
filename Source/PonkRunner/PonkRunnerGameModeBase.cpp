@@ -237,8 +237,6 @@ void APonkRunnerGameModeBase::SetStateGameOver() const
 
 	DifficultyManager->Stop();
 
-	auto weaponController = Cast<UWeaponController>(RunMan->GetComponentByClass(UWeaponController::StaticClass()));
-	weaponController->FireRelease();
 }
 
 /////////////////////////////////

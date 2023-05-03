@@ -12,6 +12,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnObstacleKilledEvent);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnObstacleOutOfBoundsEvent, AObstacleBase*, Obstacle);
+
 UCLASS()
 class PONKRUNNER_API AObstacleManager : public AActor
 {
@@ -33,15 +35,21 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DespawnObstacle(AObstacleBase* obstacle);
-	
+
 	UFUNCTION(BlueprintCallable)
 	void ClearObstacles();
-	
+
 	UPROPERTY()
 	FOnObstacleKilledEvent OnObstacleKilledEvent;
 
+	UPROPERTY()
+	FOnObstacleOutOfBoundsEvent OnObstacleOutOfBoundsEvent;
+
 	UPROPERTY(EditAnywhere)
 	AActor* WorldAnchor;
+
+	UFUNCTION(BlueprintCallable)
+	TArray<AObstacleBase*> GetObstacles() { return _obstacles; };
 
 private:
 	UPROPERTY()

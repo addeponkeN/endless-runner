@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "GameOverPanel.h"
 #include "MainMenuGui.h"
 #include "RunManCharacter.h"
@@ -13,10 +14,12 @@
 #include "HighScoreManager.h"
 #include "PlatformManager.h"
 #include "PlayerManager.h"
+
 #include "GameFramework/GameModeBase.h"
 #include "PonkRunnerGameModeBase.generated.h"
 
 class URunnerScoreController;
+
 /**
  *	THE SPAGHETT
  */

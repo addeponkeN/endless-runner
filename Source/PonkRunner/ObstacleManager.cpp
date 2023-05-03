@@ -6,11 +6,15 @@
 #include "ActorPool.h"
 #include "PonkRunner.h"
 #include "PonkRunnerGameModeBase.h"
+#include "RandomObstacleExploder.h"
 #include "WallObstacle.h"
 
 AObstacleManager::AObstacleManager()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	URandomObstacleExploder* exploder = CreateDefaultSubobject<URandomObstacleExploder>(TEXT("RandomObstacleExploder"));
+	AddOwnedComponent(exploder);
 }
 
 void AObstacleManager::BeginPlay()
@@ -24,7 +28,7 @@ void AObstacleManager::BeginPlay()
 
 	// if (!WorldAnchor)
 	// {
-		// LOG("anchor NULL");
+	// LOG("anchor NULL");
 	// }
 }
 
@@ -63,7 +67,13 @@ void AObstacleManager::Tick(float DeltaTime)
 
 		obstacle->UpdateObstacle(DeltaTime);
 
-		if (!obstacle->IsAlive || obstacle->IsOutOfBounds(&endOfLine))
+		if (obstacle->IsOutOfBounds(&endOfLine))
+		{
+			OnObstacleOutOfBoundsEvent.Broadcast(obstacle);
+			DespawnObstacle(obstacle);
+			i--;
+		}
+		else if (!obstacle->IsAlive)
 		{
 			DespawnObstacle(obstacle);
 			i--;
@@ -75,7 +85,7 @@ void AObstacleManager::DespawnObstacle(AObstacleBase* obstacle)
 {
 	_obstacles.Remove(obstacle);
 
-	if(obstacle->KilledByPlayer)
+	if (obstacle->KilledByPlayer)
 	{
 		OnObstacleKilledEvent.Broadcast();
 	}
