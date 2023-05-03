@@ -11,8 +11,24 @@
 
 ![image](https://user-images.githubusercontent.com/17746816/233835677-4fdd1e05-0189-4275-bd91-4d8db25ff4fe.png)
 
+# Instructions (Part 2)
 
-# Instructions
+## 1. Add support for 2 players local mode
+
+Implemented a [PlayerManager](https://github.com/addeponkeN/endless-runner/blob/part2/Source/PonkRunner/PlayerManager.cpp) which manages the 2 players.
+
+Both players are controlled by the keyboard. (WASD+Space & Arrows+RCtrl)
+
+Since UE out-of-the-box Character only supports 1 playable character per controller (keyboard), Player1 is taking input for both P1 and P2.
+
+A better way would be to have a third player, "Player 0". Player 0 takes all input from the keyboard and redirects it to P1 and P2. But above implementation was faster to implement.
+
+The [RandomObstacleExploder](https://github.com/addeponkeN/endless-runner/blob/part2/Source/PonkRunner/RandomObstacleExploder.cpp) will randomnly explode a random obstacle when an obstacle goes out of bounds (aka dodged).
+
+
+
+# Instructions (Part 1)
+
 
 ## 1. Spawning platforms over a pre-defined area of the screen which scroll past the player at a particular rate
 
