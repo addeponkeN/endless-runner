@@ -1,7 +1,6 @@
-# DOWNLOADS
+# DOWNLOADS - PART 2
 
-### PART 2
-### [SOURCE](https://github.com/addeponkeN/endless-runner/archive/refs/tags/part1_release.zip) / [RELEASE](https://github.com/addeponkeN/endless-runner/releases/download/part1_release/EndlessRunner_Part1.zip)
+### [SOURCE](https://github.com/addeponkeN/endless-runner/archive/refs/tags/part2_release.zip) / [RELEASE](https://github.com/addeponkeN/endless-runner/releases/download/part2_release/endless-runner-part2.zip)
 
 ![image](https://user-images.githubusercontent.com/17746816/233847127-0e95d502-e5f6-4ae8-83c8-390e422849b4.png)
 
