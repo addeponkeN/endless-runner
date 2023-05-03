@@ -27,6 +27,8 @@ public:
 	void Start();
 	void SetRunnerInputEnabled(bool enabled) const;
 	void ResetRunners();
+	void SetRunnerHUDVisibility(ESlateVisibility visibility);
+	bool AllRunnersAlive();
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<ARunManCharacter*> Runners;

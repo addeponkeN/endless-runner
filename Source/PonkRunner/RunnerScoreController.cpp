@@ -3,6 +3,7 @@
 
 #include "RunnerScoreController.h"
 
+#include "PonkRunner.h"
 #include "PonkRunnerGameModeBase.h"
 
 URunnerScoreController::URunnerScoreController()

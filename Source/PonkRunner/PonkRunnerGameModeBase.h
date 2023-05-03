@@ -9,6 +9,7 @@
 #include "ScoreManager.h"
 #include "SpawnerManager.h"
 #include "DifficultyManager.h"
+#include "GameHud.h"
 #include "HighScoreManager.h"
 #include "PlatformManager.h"
 #include "PlayerManager.h"
@@ -17,7 +18,7 @@
 
 class URunnerScoreController;
 /**
- * 
+ *	THE SPAGHETT
  */
 UCLASS()
 class PONKRUNNER_API APonkRunnerGameModeBase : public AGameModeBase
@@ -29,7 +30,6 @@ public:
 	
 	static APonkRunnerGameModeBase* GetMode(const UWorld* world);
 	virtual void InitGameState() override;
-	void SetPointers();
 
 protected:
 	virtual void BeginPlay() override;
@@ -37,9 +37,12 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 
 	void InitDifficultyManager();
-	void ScoreValueChanged();
+
 
 public:
+	UFUNCTION()
+	void ScoreValueChanged();
+	
 	UFUNCTION()
 	void RunnerHealthChanged();
 
@@ -90,11 +93,17 @@ public:
 	UPROPERTY(EditAnywhere)
 	UMainMenuGui* MenuGui;
 
-	UPROPERTY(EditAnywhere)
-	URunnerHUD* RunnerHud;
+	// UPROPERTY(EditAnywhere)
+	// URunnerHUD* RunnerHud;
+
+	// UPROPERTY(EditAnywhere)
+	// TSubclassOf<URunnerHUD> RunnerHudTemplate;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<URunnerHUD> RunnerHudTemplate;
+	UGameHud* GameHud;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UGameHud> GameHudTemplate;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UGameOverPanel> GameOverPanelTemplate;
@@ -103,7 +112,9 @@ public:
 	UGameOverPanel* GameOverPanel;
 
 	HighScoreManager* HighScoreManager;
+	
 
 private:
 	bool _inited;
+	void SetPointers();
 };

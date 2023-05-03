@@ -4,6 +4,7 @@
 #include "PonkRunnerGameModeBase.h"
 
 #include "DifficultyManager.h"
+#include "GameHud.h"
 #include "ObstacleManager.h"
 #include "PonkRunner.h"
 #include "RunnerPlayerController.h"
@@ -33,7 +34,6 @@ void APonkRunnerGameModeBase::InitGameState()
 
 	ScoreManager = NewObject<UScoreManager>(this);
 
-
 	const bool isDefaultPawn = DefaultPawnClass == ADefaultPawn::StaticClass();
 
 	if (isDefaultPawn || !DefaultPawnClass)
@@ -58,7 +58,19 @@ void APonkRunnerGameModeBase::SetPointers()
 	PlayerManager = Cast<APlayerManager>(
 		UGameplayStatics::GetActorOfClass(GetWorld(), APlayerManager::StaticClass()));
 
+	if(PlayerManager)
+	{
+		auto runners = PlayerManager->Runners;
+		for (int i = 0; i < runners.Num(); ++i)
+		{
+			runners[i]->Health->OnValueChangedEvent.AddDynamic(this, &APonkRunnerGameModeBase::RunnerHealthChanged);
+		}
+	}
+
 	InitDifficultyManager();
+	
+	ObstacleManager->OnObstacleKilledEvent.AddDynamic(this, &APonkRunnerGameModeBase::ObstacleKilled);
+	ScoreManager->OnScoreChangedEvent.AddDynamic(this, &APonkRunnerGameModeBase::ScoreValueChanged);
 }
 
 void APonkRunnerGameModeBase::BeginPlay()
@@ -68,7 +80,7 @@ void APonkRunnerGameModeBase::BeginPlay()
 	ARunnerPlayerController* playerController = Cast<ARunnerPlayerController>(GetWorld()->GetFirstPlayerController());
 	RunMan = Cast<ARunManCharacter>(playerController->GetCharacter());
 
-	SetPointers();
+	// SetPointers();
 
 	//	create main menu gui
 	MenuGui = CreateWidget<UMainMenuGui>(playerController, MenuGuiTemplate);
@@ -81,16 +93,13 @@ void APonkRunnerGameModeBase::BeginPlay()
 	GameOverPanel->SetVisibility(ESlateVisibility::Hidden);
 
 	//	create runner hud & hide it
-	RunnerHud = CreateWidget<URunnerHUD>(playerController, RunnerHudTemplate);
-	check(RunnerHud);
-	RunnerHud->AddToPlayerScreen();
-	RunnerHud->SetVisibility(ESlateVisibility::Hidden);
+	GameHud = CreateWidget<UGameHud>(playerController, GameHudTemplate);
+	check(GameHud);
+	GameHud->AddToViewport();
+	GameHud->SetVisibility(ESlateVisibility::Hidden);
 
 	playerController->SetCursorEnabled(true);
 
-	RunMan->Health->OnValueChangedEvent.AddDynamic(this, &APonkRunnerGameModeBase::RunnerHealthChanged);
-	ObstacleManager->OnObstacleKilledEvent.AddDynamic(this, &APonkRunnerGameModeBase::ObstacleKilled);
-	ScoreManager->OnScoreChangedEvent.AddDynamic(this, &APonkRunnerGameModeBase::ScoreValueChanged);
 }
 
 void APonkRunnerGameModeBase::Tick(float DeltaSeconds)
@@ -121,12 +130,12 @@ void APonkRunnerGameModeBase::InitDifficultyManager()
 
 void APonkRunnerGameModeBase::ScoreValueChanged()
 {
-	RunnerHud->SetScore(ScoreManager->CurrentScore);
+	GameHud->SetScore(ScoreManager->CurrentScore);
 }
 
 void APonkRunnerGameModeBase::RunnerHealthChanged()
 {
-	if (RunMan->Health->Value <= 0)
+	if(!PlayerManager->AllRunnersAlive())
 	{
 		SetStateGameOver();
 	}
@@ -135,12 +144,11 @@ void APonkRunnerGameModeBase::RunnerHealthChanged()
 void APonkRunnerGameModeBase::DifficultyValueChanged()
 {
 	SpawnerManager->SetSpawnersDifficulty(DifficultyManager->DifficultyValue);
-	// PlatformManager->SetDifficulty(DifficultyManager->DifficultyValue);
 }
 
 void APonkRunnerGameModeBase::ObstacleKilled()
 {
-	int obstacleWorth = 10;
+	constexpr int obstacleWorth = 10;
 	// todo : set obstacle worth
 	//obstacleWorth = obstacleWorth->GetWorth();
 	ScoreManager->AddScore(obstacleWorth);
@@ -157,16 +165,16 @@ void APonkRunnerGameModeBase::ObstacleKilled()
 void APonkRunnerGameModeBase::SetStatePlay()
 {
 	//	set player hud visible
-	// RunMan->HUD->SetVisibility(ESlateVisibility::Visible);
-	RunnerHud->SetVisibility(ESlateVisibility::Visible);
+	PlayerManager->SetRunnerHUDVisibility(ESlateVisibility::Visible);
+	GameHud->SetVisibility(ESlateVisibility::Visible);
 
-	if (!PlayerManager)
-	{
-		PlayerManager = Cast<APlayerManager>(
-			UGameplayStatics::GetActorOfClass(GetWorld(), APlayerManager::StaticClass()));
-	}
+	// if (!PlayerManager)
+	// {
+		// PlayerManager = Cast<APlayerManager>(
+			// UGameplayStatics::GetActorOfClass(GetWorld(), APlayerManager::StaticClass()));
+	// }
+	
 	PlayerManager->SetRunnerInputEnabled(true);
-	// SetRunnerInputEnabled(true);
 
 	//	start the scorecontroller 
 	ScoreController->StartTickScore();
@@ -191,7 +199,6 @@ void APonkRunnerGameModeBase::SetStateMenu() const
 	MenuGui->SetVisibility(ESlateVisibility::Visible);
 
 	//	disable player input
-	// SetRunnerInputEnabled(false);
 	PlayerManager->SetRunnerInputEnabled(false);
 
 	//	show cursor
@@ -212,14 +219,13 @@ void APonkRunnerGameModeBase::SetStateMenu() const
 void APonkRunnerGameModeBase::SetStateGameOver() const
 {
 	//	hide player hud
-	// RunMan->HUD->SetVisibility(ESlateVisibility::Hidden);
-	RunnerHud->SetVisibility(ESlateVisibility::Hidden);
+	PlayerManager->SetRunnerHUDVisibility(ESlateVisibility::Hidden);
+	GameHud->SetVisibility(ESlateVisibility::Hidden);
 
 	//	show game over panel
 	GameOverPanel->SetVisibility(ESlateVisibility::Visible);
 
 	PlayerManager->SetRunnerInputEnabled(false);
-	// SetRunnerInputEnabled(false);
 
 	GameOverPanel->SetHighScore(ScoreManager->CurrentScore);
 
@@ -235,24 +241,5 @@ void APonkRunnerGameModeBase::SetStateGameOver() const
 	weaponController->FireRelease();
 }
 
-
 /////////////////////////////////
 /////////////////////////////////
-
-
-// void APonkRunnerGameModeBase::SetRunnerInputEnabled(bool enabled) const
-// {
-// 	ARunnerPlayerController* controller = RunMan->RunPlayerController;
-//
-// 	if (enabled)
-// 	{
-// 		RunMan->EnableInput(controller);
-// 	}
-// 	else
-// 	{
-// 		RunMan->DisableInput(controller);
-// 	}
-//
-// 	//	hide cursor
-// 	controller->SetCursorEnabled(!enabled);
-// }

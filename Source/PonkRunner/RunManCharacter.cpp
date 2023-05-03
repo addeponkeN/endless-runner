@@ -5,6 +5,7 @@
 
 #include "ObstacleBase.h"
 #include "PonkRunner.h"
+#include "WeaponController.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 
@@ -25,54 +26,43 @@ ARunManCharacter::ARunManCharacter()
 
 	Health = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
 	AddOwnedComponent(Health);
+
+	WeaponController = CreateDefaultSubobject<UWeaponController>(TEXT("WeaponController"));
+	AddOwnedComponent(WeaponController); 
 }
 
 void ARunManCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// WeaponController = Cast<UWeaponController>(GetComponentByClass(UWeaponController::StaticClass()));
-
-	//	setup HUD
-	// if (HUDClass)
-	// {
-	// HUD = CreateWidget<URunnerHUD>(RunPlayerController, HUDClass);
-	// check(HUD);
-	// HUD->AddToPlayerScreen();
-	// HUD->SetVisibility(ESlateVisibility::Hidden);
-	// }
-
-	// const FVector startPosition = FVector(0.f, 0.f, 10.f);
-	// SetActorLocation(startPosition);
-
 	ResetRunMan();
 
 	if (Collider)
 	{
 		Collider->OnComponentBeginOverlap.AddDynamic(this, &ARunManCharacter::OnColliderOverlapBegin);
-		// LOG("listening to ObstacleCollider");
 	}
 
 	Health->OnValueChangedEvent.AddDynamic(this, &ARunManCharacter::OnHealthChanged);
-	// OnHealthChanged();
 }
 
 void ARunManCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-
-	//	not sure if this is needed...
-	// if (HUD)
-	// {
-	// HUD->RemoveFromParent();
-	// HUD = nullptr;
-	// }
 }
 
 void ARunManCharacter::FinalizeCharacter()
 {
 	RunPlayerController = Cast<ARunnerPlayerController>(GetController());
 	DisableInput(RunPlayerController);
+
+	if (HudTemplate)
+	{
+		Hud = CreateWidget<URunnerHUD>(RunPlayerController, HudTemplate);
+		check(Hud);
+		Hud->AddToPlayerScreen();
+		Hud->SetVisibility(ESlateVisibility::Hidden);
+		OnHealthChanged();
+	}
 
 	if (RunPlayerController)
 	{
@@ -89,7 +79,12 @@ void ARunManCharacter::FinalizeCharacter()
 	{
 		//	HACK: player1 controls both p1 & p2
 		input->BindAxis(TEXT("P1_MoveHorizontal"), this, &ARunManCharacter::P1_MoveHorizontal);
+		input->BindAction(TEXT("P1_Fire"), IE_Pressed, this, &ARunManCharacter::P1_Fire);
+		input->BindAction(TEXT("P1_Fire"), IE_Released, this, &ARunManCharacter::P1_FireRelease);
+
 		input->BindAxis(TEXT("P2_MoveHorizontal"), this, &ARunManCharacter::P2_MoveHorizontal);
+		input->BindAction(TEXT("P2_Fire"), IE_Pressed, this, &ARunManCharacter::P2_Fire);
+		input->BindAction(TEXT("P2_Fire"), IE_Released, this, &ARunManCharacter::P2_FireRelease);
 	}
 }
 
@@ -143,24 +138,9 @@ void ARunManCharacter::OnColliderOverlapBegin(
 
 void ARunManCharacter::OnHealthChanged()
 {
-	// HUD->SetHealth(Health->Value);
-}
-
-void ARunManCharacter::P1_MoveHorizontal(float direction)
-{
-	_direction = direction;
-	if (direction != 0.f)
+	if (Hud)
 	{
-		LOG(FString::Printf(TEXT("P%i moving"), PlayerIndex));
-	}
-}
-
-void ARunManCharacter::P2_MoveHorizontal(float direction)
-{
-	OtherRunner->_direction = direction;
-	if (direction != 0.f)
-	{
-		LOG(FString::Printf(TEXT("P%i moving"), OtherRunner->PlayerIndex));
+		Hud->SetHealth(Health->Value);
 	}
 }
 
@@ -169,3 +149,34 @@ void ARunManCharacter::MoveHorizontalRelativeToActor(float dt)
 	AddMovementInput(GetActorRightVector(), _direction * MoveSpeed * dt);
 }
 
+//	2 player, 1 keyboard band aid
+
+void ARunManCharacter::P1_Fire()
+{
+	WeaponController->Fire();
+}
+
+void ARunManCharacter::P1_FireRelease()
+{
+	WeaponController->FireRelease();
+}
+
+void ARunManCharacter::P2_Fire()
+{
+	OtherRunner->WeaponController->Fire();
+}
+
+void ARunManCharacter::P2_FireRelease()
+{
+	OtherRunner->WeaponController->FireRelease();
+}
+
+void ARunManCharacter::P1_MoveHorizontal(float direction)
+{
+	_direction = direction;
+}
+
+void ARunManCharacter::P2_MoveHorizontal(float direction)
+{
+	OtherRunner->_direction = direction;
+}

@@ -7,6 +7,7 @@
 #include "ObstacleCollider.h"
 #include "RunnerHUD.h"
 #include "RunnerPlayerController.h"
+#include "WeaponController.h"
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
 #include "RunManCharacter.generated.h"
@@ -46,9 +47,13 @@ public:
 
 	UFUNCTION()
 	void OnHealthChanged();
+	void P1_Fire();
+	void P1_FireRelease();
+	void P2_Fire();
+	void P2_FireRelease();
 
-	// UPROPERTY()
-	// URunnerHUD* HUD;
+	UPROPERTY()
+	URunnerHUD* Hud;
 
 	// UObstacleCollider* ObstacleReceiver;
 	UPROPERTY(EditAnywhere)
@@ -60,8 +65,8 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	ARunManCharacter* OtherRunner;
 
-	// UPROPERTY()
-	// UWeaponController* WeaponController;
+	UPROPERTY()
+	UWeaponController* WeaponController;
 
 	UPROPERTY()
 	float _direction;
@@ -79,10 +84,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* Collider;
 
-
-	// UPROPERTY(EditAnywhere)
-	// TSubclassOf<URunnerHUD> HUDClass;
-
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<URunnerHUD> HudTemplate;
 
 	void P1_MoveHorizontal(float direction);
 	void P2_MoveHorizontal(float direction);

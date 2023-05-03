@@ -15,11 +15,9 @@ class PONKRUNNER_API UWeaponController : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UWeaponController();
 
 protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:

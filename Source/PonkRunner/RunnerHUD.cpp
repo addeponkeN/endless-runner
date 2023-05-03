@@ -5,12 +5,12 @@
 
 void URunnerHUD::SetHealth(const int32& health)
 {
-	FText healthDisplayText = FText::AsNumber(health);
+	const FText healthDisplayText = FText::AsNumber(health);
 	LbHealth->SetText(healthDisplayText);
 }
 
-void URunnerHUD::SetScore(const int32& score)
-{
-	FText scoreDisplayText = FText::AsNumber(score);
-	LbScore->SetText(scoreDisplayText);
-}
+// void URunnerHUD::SetScore(const int32& score)
+// {
+	// const FText scoreDisplayText = FText::AsNumber(score);
+	// LbScore->SetText(scoreDisplayText);
+// }

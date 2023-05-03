@@ -3,6 +3,8 @@
 
 #include "WeaponController.h"
 
+#include "RunManCharacter.h"
+
 // Sets default values for this component's properties
 UWeaponController::UWeaponController()
 {
@@ -12,13 +14,13 @@ UWeaponController::UWeaponController()
 void UWeaponController::BeginPlay()
 {
 	Super::BeginPlay();
-	AActor* owner = GetOwner();
-	UInputComponent* input = Cast<UInputComponent>(owner->GetComponentByClass(UInputComponent::StaticClass()));
-	if (input)
-	{
-		input->BindAction(TEXT("P1_Fire"), IE_Pressed, this, &UWeaponController::Fire);
-		input->BindAction(TEXT("P1_Fire"), IE_Released, this, &UWeaponController::FireRelease);
-	}
+	// AActor* owner = GetOwner();
+	// UInputComponent* input = Cast<UInputComponent>(owner->GetComponentByClass(UInputComponent::StaticClass()));
+	// if (input)
+	// {
+	// 	input->BindAction(TEXT("P1_Fire"), IE_Pressed, this, &UWeaponController::Fire);
+	// 	input->BindAction(TEXT("P1_Fire"), IE_Released, this, &UWeaponController::FireRelease);
+	// }
 }
 
 void UWeaponController::Fire()

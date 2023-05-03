@@ -53,7 +53,6 @@ void APlayerManager::Start()
 		}
 	}
 
-
 	for (int i = 0; i < Runners.Num(); ++i)
 	{
 		Runners[i]->FinalizeCharacter();
@@ -77,7 +76,6 @@ void APlayerManager::SetRunnerInputEnabled(bool enabled) const
 
 		if (!controller)
 		{
-			// LOG(FString::Printf(TEXT("Player %i controller was null"), i));
 			continue;
 		}
 
@@ -89,12 +87,9 @@ void APlayerManager::SetRunnerInputEnabled(bool enabled) const
 		{
 			runner->DisableInput(controller);
 		}
-		// if (i < 1)
-		// {
-			controller->SetCursorEnabled(!enabled);
-		// }
+		
+		controller->SetCursorEnabled(!enabled);
 
-		// LOG(FString::Printf(TEXT("Set input enable for %i to %i"), i, enabled));
 	}
 }
 
@@ -104,4 +99,24 @@ void APlayerManager::ResetRunners()
 	{
 		Runners[i]->ResetRunMan();
 	}
+}
+
+void APlayerManager::SetRunnerHUDVisibility(ESlateVisibility visibility)
+{
+	for (int i = 0; i < Runners.Num(); ++i)
+	{
+		Runners[i]->Hud->SetVisibility(visibility);
+	}
+}
+
+bool APlayerManager::AllRunnersAlive()
+{
+	for (int i = 0; i < Runners.Num(); ++i)
+	{
+		if (Runners[i]->Health->Value <= 0)
+		{
+			return false;
+		}
+	}
+	return true;
 }
