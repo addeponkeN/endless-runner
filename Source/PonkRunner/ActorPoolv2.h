@@ -1,0 +1,128 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "Poolable.h"
+
+//////////////////////////////////////////////////
+////////////////////HEADER////////////////////////
+//////////////////////////////////////////////////
+
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int>  = 1>
+class ActorPoolv2
+{
+private:
+	ActorPoolv2()
+	{
+	}
+public:
+	static void Init(UWorld* world);
+	static void Clear();
+	static T* Create(TSubclassOf<AActor> objectTemplate, FVector const* position, FRotator const* rotation);
+	static T* Spawn(TSubclassOf<AActor> objectTemplate);
+	static T* Spawn(TSubclassOf<AActor> objectTemplate, FVector const* position);
+	static T* Spawn(TSubclassOf<AActor> objectTemplate, FVector const* position, FRotator const* rotation);
+	static void Return(T* obj);
+	static bool IsInitialized;
+
+private:
+	static FName _name;
+	static UWorld* _world;
+	static TMap<TSubclassOf<AActor>, TArray<T*>> _mapPool;
+};
+
+
+//////////////////////////////////////////////////
+//////////////////////CPP/////////////////////////
+//////////////////////////////////////////////////
+
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
+bool ActorPoolv2<T, Ty>::IsInitialized;
+
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
+FName ActorPoolv2<T, Ty>::_name;
+
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
+UWorld* ActorPoolv2<T, Ty>::_world = nullptr;
+
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
+TMap<TSubclassOf<AActor>, TArray<T*>> ActorPoolv2<T, Ty>::_mapPool;
+
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
+void ActorPoolv2<T, Ty>::Init(UWorld* world)
+{
+	Clear();
+	_world = world;
+	IsInitialized = true;
+}
+
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
+void ActorPoolv2<T, Ty>::Clear()
+{
+	IsInitialized = false;
+	_mapPool.Empty();
+}
+
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
+T* ActorPoolv2<T, Ty>::Create(TSubclassOf<AActor> objectTemplate, FVector const* position, FRotator const* rotation)
+{
+	T* spawned = _world->SpawnActor<T>(objectTemplate, *position, *rotation);
+	return spawned;
+}
+
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
+T* ActorPoolv2<T, Ty>::Spawn(TSubclassOf<AActor> objectTemplate)
+{
+	return Spawn(objectTemplate, &FVector::ZeroVector, &FRotator::ZeroRotator);
+}
+
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
+T* ActorPoolv2<T, Ty>::Spawn(TSubclassOf<AActor> objectTemplate, FVector const* position)
+{
+	return Spawn(objectTemplate, position, &FRotator::ZeroRotator);
+}
+
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
+T* ActorPoolv2<T, Ty>::Spawn(TSubclassOf<AActor> objectTemplate, FVector const* position, FRotator const* rotation)
+{
+	TArray<T*>* arr;
+
+	if (!_mapPool.Contains(objectTemplate))
+	{
+		arr = &_mapPool.Add(objectTemplate);
+	}
+	else
+	{
+		arr = &_mapPool[objectTemplate];
+	}
+
+	T* ret;
+	APoolable* poolable;
+
+	if (arr->IsEmpty())
+	{
+		ret = Create(objectTemplate, position, rotation);
+		poolable = ret;
+		poolable->OnCreated(_name);
+	}
+	else
+	{
+		ret = arr->Pop(false);
+		poolable = ret;
+	}
+
+	poolable->SetActorLocation(*position);
+	poolable->SetActorRotation(*rotation);
+	poolable->Spawned();
+
+	return ret;
+}
+
+template <typename T, std::enable_if_t<std::is_base_of_v<APoolable, T>, int> Ty>
+void ActorPoolv2<T, Ty>::Return(T* obj)
+{
+	APoolable* poolable = obj;
+	poolable->Reset();
+	poolable->Returned();
+	_mapPool[poolable->GetClass()].Add(obj);
+}

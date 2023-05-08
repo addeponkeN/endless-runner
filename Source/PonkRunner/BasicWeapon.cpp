@@ -3,14 +3,14 @@
 
 #include "BasicWeapon.h"
 
-#include "ActorPool.h"
+#include "ActorPoolv2.h"
 #include "BasicBullet.h"
 
 void ABasicWeapon::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-	if (ActorPool<ABasicBullet>::IsInitialized)
-		ActorPool<ABasicBullet>::Clear();
+	if (ActorPoolv2<ABasicBullet>::IsInitialized)
+		ActorPoolv2<ABasicBullet>::Clear();
 }
 
 void ABasicWeapon::FireStart()
@@ -24,12 +24,12 @@ void ABasicWeapon::SpawnBullet()
 	const FVector location = BulletSpawnLocation->GetComponentLocation();
 	const FVector direction = BulletSpawnLocation->GetForwardVector();
 
-	if (!ActorPool<ABasicBullet>::IsInitialized)
+	if (!ActorPoolv2<ABasicBullet>::IsInitialized)
 	{
-		ActorPool<ABasicBullet>::Init(GetWorld(), BulletTemplate);
+		ActorPoolv2<ABasicBullet>::Init(GetWorld());
 	}
 
-	ABasicBullet* bullet = ActorPool<ABasicBullet>::Spawn(&location);
+	ABasicBullet* bullet = ActorPoolv2<ABasicBullet>::Spawn(BulletTemplate);
 	bullet->Start(&direction);
 }
 
