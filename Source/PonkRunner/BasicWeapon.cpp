@@ -29,7 +29,7 @@ void ABasicWeapon::SpawnBullet()
 		ActorPoolv2<ABasicBullet>::Init(GetWorld());
 	}
 
-	ABasicBullet* bullet = ActorPoolv2<ABasicBullet>::Spawn(BulletTemplate);
+	ABasicBullet* bullet = ActorPoolv2<ABasicBullet>::Spawn(BulletTemplate, &location);
 	bullet->Start(&direction);
 }
 
